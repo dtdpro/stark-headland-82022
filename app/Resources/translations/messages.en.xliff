@@ -182,6 +182,10 @@
                 <source>label.author</source>
                 <target>Author</target>
             </trans-unit>
+            <trans-unit id="label.comments">
+                <source>label.comments</source>
+                <target>Comments</target>
+            </trans-unit>
             <trans-unit id="label.author_email">
                 <source>label.author_email</source>
                 <target>Author email</target>

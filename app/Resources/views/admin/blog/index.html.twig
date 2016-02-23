@@ -11,6 +11,7 @@
                 <th>{{ 'label.title'|trans }}</th>
                 <th><i class="fa fa-user"></i> {{ 'label.author'|trans }}</th>
                 <th><i class="fa fa-calendar"></i> {{ 'label.published_at'|trans }}</th>
+                <th><i class="fa fa-bars"></i> {{ 'label.comments'|trans }}</th>
                 <th><i class="fa fa-cogs"></i> {{ 'label.actions'|trans }}</th>
             </tr>
         </thead>
@@ -20,6 +21,7 @@
                 <td>{{ post.title }}</td>
                 <td>{{ post.authorEmail }}</td>
                 <td>{% if post.publishedAt %}{{ post.publishedAt|localizeddate('short', 'short') }}{% endif %}</td>
+                <td>{{ post.comments|length }}</td>
                 <td>
                     <div class="item-actions">
                         <a href="{{ path('admin_post_show', { id: post.id }) }}" class="btn btn-sm btn-default">
