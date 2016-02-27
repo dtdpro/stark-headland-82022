@@ -229,7 +229,7 @@
 
             <trans-unit id="menu.post_list">
                 <source>menu.post_list</source>
-                <target>Post list</target>
+                <target>Posts</target>
             </trans-unit>
             <trans-unit id="menu.back_to_blog">
                 <source>menu.back_to_blog</source>
@@ -320,6 +320,15 @@
             <trans-unit id="help.more_information">
                 <source>help.more_information</source>
                 <target><![CDATA[For more information, check out the <a href="http://symfony.com/doc">Symfony doc</a>.]]></target>
+            </trans-unit>
+
+            <trans-unit id="ROLE_USER">
+                <source>ROLE_USER</source>
+                <target>Registered User</target>
+            </trans-unit>
+            <trans-unit id="ROLE_ADMIN">
+                <source>ROLE_ADMIN</source>
+                <target>Administrator</target>
             </trans-unit>
         </body>
     </file>

@@ -139,10 +139,10 @@ class BlogController extends Controller
      */
     public function editAction(Post $post, Request $request)
     {
-        if (null === $this->getUser() || !$post->isAuthor($this->getUser())) {
-            throw $this->createAccessDeniedException('Posts can only be edited by their authors.');
+        if (null === $this->getUser() || in_array('ROLE_ADMIN',$this->getUser()->getRoles()) || !$post->isAuthor($this->getUser())) {
+            $this->addFlash('error', 'Posts can only be edited by their authors.');
+            return $this->redirectToRoute('admin_post_index');
         }
-
         $entityManager = $this->getDoctrine()->getManager();
 
         $editForm = $this->createForm('AppBundle\Form\PostType', $post);

@@ -10,19 +10,15 @@
         <title>{% block title %}Symfony Demo application{% endblock %}</title>
 
         {% block stylesheets %}
-        {# uncomment the following lines to compile SCSS assets with Assetic
 
-            {% stylesheets filter="scssphp" output="css/app.css"
-                "%kernel.root_dir%/Resources/assets/scss/bootstrap.scss"
-                "%kernel.root_dir%/Resources/assets/scss/font-awesome.scss"
-                "%kernel.root_dir%/Resources/assets/css/*.css"
-                "%kernel.root_dir%/Resources/assets/scss/main.scss"
+            {% stylesheets filter="scssphp" output="css/admin.css"
+            "%kernel.root_dir%/Resources/assets/scss/bootstrap.admin.scss"
+            "%kernel.root_dir%/Resources/assets/scss/font-awesome.scss"
+            "%kernel.root_dir%/Resources/assets/css/*.css"
+            "%kernel.root_dir%/Resources/assets/scss/main.admin.scss"
             %}
-                <link rel="stylesheet" href="{{ asset_url }}" />
+            <link rel="stylesheet" href="{{ asset_url }}" />
             {% endstylesheets %}
-        #}
-
-            <link rel="stylesheet" href="{{ asset('css/app.css') }}">
         {% endblock %}
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     </head>
@@ -113,7 +109,7 @@
 
         {% block footer %}
             <footer>
-                <div class="container">
+                <div class="container-fluid">
                     <div class="row">
                         <div id="footer-copyright" class="col-md-6">
                             <p>&copy; {{ 'now'|date('Y') }} - The Symfony Project</p>

@@ -68,7 +68,10 @@ assetic:
         jsqueeze: ~
         scssphp:
             # the formatter must be the FQCN (don't use the 'compressed' value)
-            formatter: "Leafo\\ScssPhp\\Formatter\\Compressed"
+            formatter: "Leafo\ScssPhp\Formatter\Compressed"
+        lessphp:
+            file: %kernel.root_dir%/../vendor/oyejorge/less.php/lessc.inc.php
+            apply_to: "\.less$"
 
 # Doctrine Configuration (used to access databases and manipulate their information)
 doctrine:
