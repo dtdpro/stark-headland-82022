@@ -8,6 +8,7 @@
     <table class="table table-striped">
         <thead>
             <tr>
+                <th>{{ 'label.id'|trans }}</th>
                 <th>{{ 'label.title'|trans }}</th>
                 <th><i class="fa fa-user"></i> {{ 'label.author'|trans }}</th>
                 <th><i class="fa fa-calendar"></i> {{ 'label.published_at'|trans }}</th>
@@ -18,6 +19,7 @@
         <tbody>
         {% for post in posts %}
             <tr>
+                <td>{{ post.id }}</td>
                 <td>{{ post.title }}</td>
                 <td>{{ post.authorEmail }}</td>
                 <td>{% if post.publishedAt %}{{ post.publishedAt|localizeddate('short', 'short') }}{% endif %}</td>
