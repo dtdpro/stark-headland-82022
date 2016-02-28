@@ -8,6 +8,7 @@
     <table class="table table-striped">
         <thead>
             <tr>
+                <th>ID</th>
                 <th><i class="fa fa-user"></i>Username</th>
                 <th>Email</th>
                 <th><i class="fa fa-cogs"></i> Roles</th>
@@ -17,9 +18,10 @@
         <tbody>
         {% for u in users %}
             <tr>
+                <td>{{ u.id }}</td>
                 <td>{{ u.username }}</td>
                 <td>{{ u.email }}</td>
-                <td>{% for r in u.roles %}{{ r|trans }}{% endfor %}</td>
+                <td>{% for r in u.roles %}{{ r|trans }}<br>{% endfor %}</td>
                 <td>
                     <div class="item-actions">
                         <a href="{{ path('admin_user_show', { id: u.id }) }}" class="btn btn-sm btn-default">

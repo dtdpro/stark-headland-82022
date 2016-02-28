@@ -47,6 +47,8 @@ class User implements UserInterface
      */
     private $roles = array();
 
+    private $plainPassword;
+
     public function getId()
     {
         return $this->id;
@@ -83,6 +85,18 @@ class User implements UserInterface
     public function setPassword($password)
     {
         $this->password = $password;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPlainPassword()
+    {
+        return $this->plainPassword;
+    }
+    public function setPlainPassword($password)
+    {
+        $this->plainPassword = $password;
     }
 
     /**

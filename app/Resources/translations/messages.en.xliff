@@ -92,6 +92,10 @@
                 <source>title.edit_post</source>
                 <target>Edit post #%id%</target>
             </trans-unit>
+            <trans-unit id="title.edit_user">
+                <source>title.edit_user</source>
+                <target>Edit user #%id%</target>
+            </trans-unit>
             <trans-unit id="title.add_comment">
                 <source>title.add_comment</source>
                 <target>Add a comment</target>
@@ -174,6 +178,10 @@
                 <target>Browse backend</target>
             </trans-unit>
 
+            <trans-unit id="label.id">
+                <source>label.id</source>
+                <target>ID</target>
+            </trans-unit>
             <trans-unit id="label.title">
                 <source>label.title</source>
                 <target>Title</target>
@@ -325,6 +333,10 @@
             <trans-unit id="ROLE_USER">
                 <source>ROLE_USER</source>
                 <target>Registered User</target>
+            </trans-unit>
+            <trans-unit id="ROLE_EDITOR">
+                <source>ROLE_EDITOR</source>
+                <target>Editor</target>
             </trans-unit>
             <trans-unit id="ROLE_ADMIN">
                 <source>ROLE_ADMIN</source>

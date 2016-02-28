@@ -45,12 +45,16 @@ class UserController extends Controller
      *     could move this annotation to any other controller while maintaining
      *     the route name and therefore, without breaking any existing link.
      *
-     * @Route("/", name="admin_index")
      * @Route("/", name="admin_user_index")
      * @Method("GET")
      */
     public function indexAction()
     {
+        if (null === $this->getUser() || !in_array('ROLE_ADMIN',$this->getUser()->getRoles())) {
+            $this->addFlash('error', 'Users can only be viewed by administrators.');
+            return $this->redirectToRoute('admin_index');
+        }
+
         $entityManager = $this->getDoctrine()->getManager();
         $users = $entityManager->getRepository('AppBundle:User')->findAll();
 
@@ -69,11 +73,15 @@ class UserController extends Controller
      */
     public function newAction(Request $request)
     {
-        $post = new Post();
-        $post->setAuthorEmail($this->getUser()->getEmail());
+        if (null === $this->getUser() || !in_array('ROLE_ADMIN',$this->getUser()->getRoles())) {
+            $this->addFlash('error', 'Users can only be created by administrators.');
+            return $this->redirectToRoute('admin_user_index');
+        }
+
+        $user = new User();
 
         // See http://symfony.com/doc/current/book/forms.html#submitting-forms-with-multiple-buttons
-        $form = $this->createForm('AppBundle\Form\PostType', $post)
+        $form = $this->createForm('AppBundle\Form\UserType', $user)
             ->add('saveAndCreateNew', 'Symfony\Component\Form\Extension\Core\Type\SubmitType');
 
         $form->handleRequest($request);
@@ -83,27 +91,30 @@ class UserController extends Controller
         // However, we explicitly add it to improve code readability.
         // See http://symfony.com/doc/current/best_practices/forms.html#handling-form-submits
         if ($form->isSubmitted() && $form->isValid()) {
-            $post->setSlug($this->get('slugger')->slugify($post->getTitle()));
+
+            $encoder = $this->get('security.password_encoder');
+            $encodedPassword = $encoder->encodePassword($user, $user->getPlainPassword());
+            $user->setPassword($encodedPassword);
 
             $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($post);
+            $entityManager->persist($user);
             $entityManager->flush();
 
             // Flash messages are used to notify the user about the result of the
             // actions. They are deleted automatically from the session as soon
             // as they are accessed.
             // See http://symfony.com/doc/current/book/controller.html#flash-messages
-            $this->addFlash('success', 'post.created_successfully');
+            $this->addFlash('success', 'User Created Successfully');
 
             if ($form->get('saveAndCreateNew')->isClicked()) {
-                return $this->redirectToRoute('admin_post_new');
+                return $this->redirectToRoute('admin_user_new');
             }
 
-            return $this->redirectToRoute('admin_post_index');
+            return $this->redirectToRoute('admin_user_index');
         }
 
-        return $this->render('admin/blog/new.html.twig', array(
-            'post' => $post,
+        return $this->render('admin/user/new.html.twig', array(
+            'user' => $user,
             'form' => $form->createView(),
         ));
     }
@@ -116,12 +127,10 @@ class UserController extends Controller
      */
     public function showAction(User $user)
     {
-        // This security check can also be performed:
-        //   1. Using an annotation: @Security("post.isAuthor(user)")
-        //   2. Using a "voter" (see http://symfony.com/doc/current/cookbook/security/voters_data_permission.html)
-        //if (null === $this->getUser() || !$post->isAuthor($this->getUser())) {
-        //    throw $this->createAccessDeniedException('Posts can only be shown to their authors.');
-        //}
+        if (null === $this->getUser() || !in_array('ROLE_ADMIN',$this->getUser()->getRoles())) {
+            $this->addFlash('error', 'Users can only be viewed by administrators.');
+            return $this->redirectToRoute('admin_user_index');
+        }
 
         $deleteForm = $this->createDeleteForm($user);
 
@@ -137,30 +146,37 @@ class UserController extends Controller
      * @Route("/{id}/edit", requirements={"id" = "\d+"}, name="admin_user_edit")
      * @Method({"GET", "POST"})
      */
-    public function editAction(Post $post, Request $request)
+    public function editAction(User $user, Request $request)
     {
-        if (null === $this->getUser() || !$post->isAuthor($this->getUser())) {
-            throw $this->createAccessDeniedException('Posts can only be edited by their authors.');
+        if (null === $this->getUser() || !in_array('ROLE_ADMIN',$this->getUser()->getRoles())) {
+            $this->addFlash('error', 'Users can only be edited by administrators.');
+            return $this->redirectToRoute('admin_user_index');
         }
 
         $entityManager = $this->getDoctrine()->getManager();
 
-        $editForm = $this->createForm('AppBundle\Form\PostType', $post);
-        $deleteForm = $this->createDeleteForm($post);
+        $editForm = $this->createForm('AppBundle\Form\UserType', $user);
+        $deleteForm = $this->createDeleteForm($user);
 
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
-            $post->setSlug($this->get('slugger')->slugify($post->getTitle()));
+
+            if($user->getPlainPassword()) {
+                $encoder         = $this->get( 'security.password_encoder' );
+                $encodedPassword = $encoder->encodePassword( $user, $user->getPlainPassword() );
+                $user->setPassword( $encodedPassword );
+            }
+
             $entityManager->flush();
 
-            $this->addFlash('success', 'post.updated_successfully');
+            $this->addFlash('success', 'User Successfully Updated');
 
-            return $this->redirectToRoute('admin_user_edit', array('id' => $post->getId()));
+            return $this->redirectToRoute('admin_user_edit', array('id' => $user->getId()));
         }
 
-        return $this->render('admin/blog/edit.html.twig', array(
-            'post'        => $post,
+        return $this->render('admin/user/edit.html.twig', array(
+            'user'        => $user,
             'edit_form'   => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         ));
@@ -178,6 +194,11 @@ class UserController extends Controller
      */
     public function deleteAction(Request $request, User $user)
     {
+        if (null === $this->getUser() || !in_array('ROLE_ADMIN',$this->getUser()->getRoles())) {
+            $this->addFlash('error', 'Users can only be deleted by administrators.');
+            return $this->redirectToRoute('admin_user_index');
+        }
+
         $form = $this->createDeleteForm($user);
         $form->handleRequest($request);
 
