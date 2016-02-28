@@ -139,7 +139,7 @@ class BlogController extends Controller
      */
     public function editAction(Post $post, Request $request)
     {
-        if (null === $this->getUser() || in_array('ROLE_ADMIN',$this->getUser()->getRoles()) || !$post->isAuthor($this->getUser())) {
+        if (null === $this->getUser() || !in_array('ROLE_ADMIN',$this->getUser()->getRoles()) || (!$post->isAuthor($this->getUser()) && in_array('ROLE_EDITOR',$this->getUser()->getRoles()))) {
             $this->addFlash('error', 'Posts can only be edited by their authors.');
             return $this->redirectToRoute('admin_post_index');
         }
