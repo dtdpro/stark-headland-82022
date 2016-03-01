@@ -61,6 +61,7 @@ class AppExtension extends \Twig_Extension
     {
         return array(
             new \Twig_SimpleFunction('locales', array($this, 'getLocales')),
+            new \Twig_SimpleFunction('phpver', array($this, 'phpVer')),
         );
     }
 
@@ -103,5 +104,15 @@ class AppExtension extends \Twig_Extension
         // the name of the Twig extension must be unique in the application. Consider
         // using 'app.extension' if you only have one Twig extension in your application.
         return 'app.extension';
+    }
+
+    /**
+     * Returns the PHP Version
+     *
+     * @return array
+     */
+    public function phpVer()
+    {
+        return phpversion();
     }
 }
