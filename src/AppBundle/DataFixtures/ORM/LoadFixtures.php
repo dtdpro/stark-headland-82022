@@ -16,6 +16,7 @@ use AppBundle\Entity\Post;
 use AppBundle\Entity\Comment;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManager;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -40,8 +41,8 @@ class LoadFixtures implements FixtureInterface, ContainerAwareInterface
      */
     public function load(ObjectManager $manager)
     {
-        $this->loadUsers($manager);
-        $this->loadPosts($manager);
+        $adminUser = $this->loadUsers($manager);
+        $this->loadPosts($manager,$adminUser);
     }
 
     private function loadUsers(ObjectManager $manager)
@@ -56,17 +57,19 @@ class LoadFixtures implements FixtureInterface, ContainerAwareInterface
         $manager->persist($johnUser);
 
         $annaAdmin = new User();
-        $annaAdmin->setUsername('anna_admin');
-        $annaAdmin->setEmail('anna_admin@symfony.com');
+        $annaAdmin->setUsername('admin');
+        $annaAdmin->setEmail('admin@symfony.com');
         $annaAdmin->setRoles(array('ROLE_ADMIN'));
         $encodedPassword = $passwordEncoder->encodePassword($annaAdmin, 'kitten');
         $annaAdmin->setPassword($encodedPassword);
         $manager->persist($annaAdmin);
 
         $manager->flush();
+
+        return $annaAdmin;
     }
 
-    private function loadPosts(ObjectManager $manager)
+    private function loadPosts(ObjectManager $manager, $adminUser)
     {
         foreach (range(1, 30) as $i) {
             $post = new Post();
@@ -75,13 +78,13 @@ class LoadFixtures implements FixtureInterface, ContainerAwareInterface
             $post->setSummary($this->getRandomPostSummary());
             $post->setSlug($this->container->get('slugger')->slugify($post->getTitle()));
             $post->setContent($this->getPostContent());
-            $post->setAuthorEmail('anna_admin@symfony.com');
+            $post->setUser($adminUser);
             $post->setPublishedAt(new \DateTime('now - '.$i.'days'));
 
             foreach (range(1, 5) as $j) {
                 $comment = new Comment();
 
-                $comment->setAuthorEmail('john_user@symfony.com');
+                $comment->setUser($adminUser);
                 $comment->setPublishedAt(new \DateTime('now + '.($i + $j).'seconds'));
                 $comment->setContent($this->getRandomCommentContent());
                 $comment->setPost($post);
