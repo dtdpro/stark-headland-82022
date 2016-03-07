@@ -60,10 +60,10 @@ class Post
     private $content;
 
     /**
-     * @ORM\Column(type="string")
-     * @Assert\Email()
+     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\JoinColumn(name="user", referencedColumnName="id")
      */
-    private $authorEmail;
+    protected $user;
 
     /**
      * @ORM\Column(type="datetime")
@@ -122,16 +122,6 @@ class Post
         $this->content = $content;
     }
 
-    public function getAuthorEmail()
-    {
-        return $this->authorEmail;
-    }
-
-    public function setAuthorEmail($authorEmail)
-    {
-        $this->authorEmail = $authorEmail;
-    }
-
     /**
      * Is the given User the author of this Post?
      *
@@ -141,7 +131,7 @@ class Post
      */
     public function isAuthor(User $user)
     {
-        return $user->getEmail() == $this->getAuthorEmail();
+        return $user == $this->getUser();
     }
 
     public function getPublishedAt()
@@ -178,5 +168,28 @@ class Post
     public function setSummary($summary)
     {
         $this->summary = $summary;
+    }
+
+    /**
+     * Set user
+     *
+     * @param \AppBundle\Entity\User $user
+     * @return Deck
+     */
+    public function setUser(\AppBundle\Entity\User $user = null)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return \AppBundle\Entity\User
+     */
+    public function getUser()
+    {
+        return $this->user;
     }
 }

@@ -45,14 +45,21 @@ class BlogController extends Controller
      *     could move this annotation to any other controller while maintaining
      *     the route name and therefore, without breaking any existing link.
      *
-     * @Route("/", name="admin_index")
-     * @Route("/", name="admin_post_index")
+     * @Route("/", name="admin_index", defaults={"page" = 1})
+     * @Route("/", name="admin_post_index", defaults={"page" = 1})
+     * @Route("/page/{page}", name="admin_post_index_paginated", requirements={"page" : "\d+"})
      * @Method("GET")
      */
-    public function indexAction()
+    public function indexAction($page)
     {
-        $entityManager = $this->getDoctrine()->getManager();
-        $posts = $entityManager->getRepository('AppBundle:Post')->findAll();
+        //$entityManager = $this->getDoctrine()->getManager();
+        //$posts = $entityManager->getRepository('AppBundle:Post')->findAll();
+
+        $query = $this->getDoctrine()->getRepository('AppBundle:Post')->queryLatest();
+
+        $paginator = $this->get('knp_paginator');
+        $posts = $paginator->paginate($query, $page, 25);
+        $posts->setUsedRoute('admin_post_index_paginated');
 
         return $this->render('admin/blog/index.html.twig', array('posts' => $posts));
     }
@@ -70,7 +77,7 @@ class BlogController extends Controller
     public function newAction(Request $request)
     {
         $post = new Post();
-        $post->setAuthorEmail($this->getUser()->getEmail());
+        $post->setUser($this->getUser());
 
         // See http://symfony.com/doc/current/book/forms.html#submitting-forms-with-multiple-buttons
         $form = $this->createForm('AppBundle\Form\PostType', $post)

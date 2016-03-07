@@ -49,6 +49,10 @@ class User implements UserInterface
 
     private $plainPassword;
 
+    public function __toString() {
+        return $this->username;
+    }
+
     public function getId()
     {
         return $this->id;

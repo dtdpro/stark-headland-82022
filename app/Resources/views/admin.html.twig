@@ -7,7 +7,7 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>{% block title %}Symfony Demo application{% endblock %}</title>
+        <title>{% block title %}The Demo Application{% endblock %}</title>
 
         {% block stylesheets %}
 
@@ -31,7 +31,7 @@
                     <div class="container-fluid">
                         <div class="navbar-header">
                             <a class="navbar-brand" href="{{ path('homepage') }}">
-                                Symfony Demo
+                                The Demo Application
                             </a>
 
                             <button type="button" class="navbar-toggle"
@@ -125,7 +125,6 @@
         {% endblock %}
 
         {% block javascripts %}
-        {# uncomment the following lines to combine and minimize JavaScript assets with Assetic
             {% javascripts filter="?jsqueeze" output="js/app.js"
                 "%kernel.root_dir%/Resources/assets/js/jquery-2.1.4.js"
                 "%kernel.root_dir%/Resources/assets/js/moment.min.js"
@@ -135,9 +134,6 @@
                 "%kernel.root_dir%/Resources/assets/js/main.js" %}
                 <script src="{{ asset_url }}"></script>
             {% endjavascripts %}
-        #}
-
-            <script src="{{ asset('js/app.js') }}"></script>
         {% endblock %}
 
         <!-- Page rendered on {{ 'now'|localizeddate('long', 'long') }} -->

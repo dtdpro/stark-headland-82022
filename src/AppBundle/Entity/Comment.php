@@ -55,10 +55,10 @@ class Comment
     private $content;
 
     /**
-     * @ORM\Column(type="string")
-     * @Assert\Email()
+     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\JoinColumn(name="user", referencedColumnName="id")
      */
-    private $authorEmail;
+    protected $user;
 
     /**
      * @ORM\Column(type="datetime")
@@ -95,13 +95,27 @@ class Comment
         $this->content = $content;
     }
 
-    public function getAuthorEmail()
+    /**
+     * Set user
+     *
+     * @param \AppBundle\Entity\User $user
+     * @return Deck
+     */
+    public function setUser(\AppBundle\Entity\User $user = null)
     {
-        return $this->authorEmail;
+        $this->user = $user;
+
+        return $this;
     }
-    public function setAuthorEmail($authorEmail)
+
+    /**
+     * Get user
+     *
+     * @return \AppBundle\Entity\User
+     */
+    public function getUser()
     {
-        $this->authorEmail = $authorEmail;
+        return $this->user;
     }
 
     public function getPublishedAt()

@@ -48,7 +48,7 @@ class PostType extends AbstractType
                 'attr' => array('rows' => 20),
                 'label' => 'label.content',
             ))
-            ->add('authorEmail', null, array('label' => 'label.author_email'))
+            ->add('user', null, array('label' => 'label.author'))
             ->add('publishedAt', 'AppBundle\Form\Type\DateTimePickerType', array(
                 'label' => 'label.published_at',
             ))

@@ -194,10 +194,6 @@
                 <source>label.comments</source>
                 <target>Comments</target>
             </trans-unit>
-            <trans-unit id="label.author_email">
-                <source>label.author_email</source>
-                <target>Author email</target>
-            </trans-unit>
             <trans-unit id="label.username">
                 <source>label.username</source>
                 <target>Username</target>
@@ -245,15 +241,19 @@
             </trans-unit>
             <trans-unit id="menu.homepage">
                 <source>menu.homepage</source>
-                <target>Homepage</target>
+                <target>Blog</target>
             </trans-unit>
             <trans-unit id="menu.admin">
                 <source>menu.admin</source>
-                <target>Backend</target>
+                <target>Admin</target>
             </trans-unit>
             <trans-unit id="menu.logout">
                 <source>menu.logout</source>
                 <target>Logout</target>
+            </trans-unit>
+            <trans-unit id="menu.login">
+                <source>menu.login</source>
+                <target>Login</target>
             </trans-unit>
 
             <trans-unit id="post.to_publish_a_comment">
