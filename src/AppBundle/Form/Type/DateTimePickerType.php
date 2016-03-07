@@ -50,9 +50,7 @@ class DateTimePickerType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(array(
-            'widget' => 'single_text',
-        ));
+        
     }
 
     /**
