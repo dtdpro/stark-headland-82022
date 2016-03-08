@@ -72,7 +72,7 @@ class Post
     private $publishedAt;
 
     /**
-     * @ORM\Column(type="datetime",nullable="true")
+     * @ORM\Column(type="datetime",nullable=true)
      * @Assert\DateTime()
      */
     private $updatedAt;
