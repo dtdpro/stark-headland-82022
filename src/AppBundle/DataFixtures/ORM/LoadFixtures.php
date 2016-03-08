@@ -72,6 +72,8 @@ class LoadFixtures implements FixtureInterface, ContainerAwareInterface
     private function loadPosts(ObjectManager $manager, $adminUser)
     {
         foreach (range(1, 30) as $i) {
+
+            $newdate = new \DateTime('now - '.$i.'days');
             $post = new Post();
 
             $post->setTitle($this->getRandomPostTitle());
@@ -79,7 +81,9 @@ class LoadFixtures implements FixtureInterface, ContainerAwareInterface
             $post->setSlug($this->container->get('slugger')->slugify($post->getTitle()));
             $post->setContent($this->getPostContent());
             $post->setUser($adminUser);
-            $post->setPublishedAt(new \DateTime('now - '.$i.'days'));
+            $post->setPublishedAt($newdate);
+            $post->setUpdatedAt($newdate);
+            $post->setStatus(1);
 
             foreach (range(1, 5) as $j) {
                 $comment = new Comment();
