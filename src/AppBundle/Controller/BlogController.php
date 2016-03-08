@@ -39,7 +39,24 @@ class BlogController extends Controller
      */
     public function indexAction($page)
     {
-        $query = $this->getDoctrine()->getRepository('AppBundle:Post')->queryLatest();
+        $user = $this->getUser();
+        $repository = $this->getDoctrine()->getRepository('AppBundle:Post');
+        $queryBuilder = $repository->createQueryBuilder('p');
+        $queryBuilder ->orderBy('p.publishedAt', 'DESC');
+
+        if (!$user) {
+            $queryBuilder->andWhere('p.status = :status')->setParameter('status', '1');
+            $queryBuilder->andWhere('p.publishedAt <= :now')->setParameter('now', new \DateTime());
+        } else if ($user->hasRole('ROLE_ADMIN')) {
+            $queryBuilder->andWhere('p.status >= :status')->setParameter('status', '0');
+        } else if ($user->hasRole('ROLE_EDITOR')) {
+            $queryBuilder->andWhere('p.status >= :status')->setParameter('status', '1');
+        } else {
+            $queryBuilder->andWhere('p.status = :status')->setParameter('status', '1');
+            $queryBuilder->andWhere('p.publishedAt <= :now')->setParameter('now', new \DateTime());
+        }
+
+        $query = $queryBuilder->getQuery();
 
         $paginator = $this->get('knp_paginator');
         $posts = $paginator->paginate($query, $page, Post::NUM_ITEMS);

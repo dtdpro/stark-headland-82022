@@ -14,6 +14,8 @@ namespace AppBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+
 
 /**
  * Defines the form used to create and manipulate blog posts.
@@ -39,6 +41,17 @@ class PostType extends AbstractType
         //     $builder->add('title', null, array('required' => false, ...));
 
         $builder
+            ->add('status', ChoiceType::class,array(
+                'choices'  => array(
+                    'Trashed' => '-1',
+                    'Unpublished' => '0',
+                    'Published' => '1',
+                    'Archived' => '2',
+                    'Review' => '3',
+                ),
+                'label' => 'label.status',
+                'choices_as_values' => true,
+            ))
             ->add('title', null, array(
                 'attr' => array('autofocus' => true),
                 'label' => 'label.title',

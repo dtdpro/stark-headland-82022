@@ -17,6 +17,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use AppBundle\Entity\Post;
+use AppBundle\Entity\PostList;
+use AppBundle\Form\Admin\PostListType;
 
 /**
  * Controller used to manage blog contents in the backend.
@@ -48,20 +50,38 @@ class BlogController extends Controller
      * @Route("/", name="admin_index", defaults={"page" = 1})
      * @Route("/", name="admin_post_index", defaults={"page" = 1})
      * @Route("/page/{page}", name="admin_post_index_paginated", requirements={"page" : "\d+"})
-     * @Method("GET")
+     * @Method({"GET", "POST"})
      */
-    public function indexAction($page)
+    public function indexAction($page, Request $request)
     {
-        //$entityManager = $this->getDoctrine()->getManager();
-        //$posts = $entityManager->getRepository('AppBundle:Post')->findAll();
+        if (!$postlist = $this->get('session')->get('admin.postlist')) {
+            $postlist = new PostList();
+        }
+        $postform = $this->createForm(PostListType::class, $postlist);
 
-        $query = $this->getDoctrine()->getRepository('AppBundle:Post')->queryLatest();
+        $postform->handleRequest($request);
 
+        $repository = $this->getDoctrine()->getRepository('AppBundle:Post');
+
+        $queryBuilder = $repository->createQueryBuilder('p');
+        $queryBuilder ->orderBy($postlist->getOrderBy(), $postlist->getOrderDir());
+
+        if ($postlist->getStatus() != -99) {
+            $queryBuilder->andWhere('p.status = :status')->setParameter('status', $postlist->getStatus());
+        }
+
+        if ($postlist->getSearchTitle()) {
+            $queryBuilder->andWhere('p.title  like :title')->setParameter('title', '%'.$postlist->getSearchTitle().'%');
+        }
+
+        $query = $queryBuilder->getQuery();
         $paginator = $this->get('knp_paginator');
-        $posts = $paginator->paginate($query, $page, 25);
+        $posts = $paginator->paginate($query, $page, $postlist->getNumListItems());
         $posts->setUsedRoute('admin_post_index_paginated');
 
-        return $this->render('admin/blog/index.html.twig', array('posts' => $posts));
+        $this->get('session')->set('admin.postlist',$postlist);
+
+        return $this->render('admin/blog/index.html.twig', array('posts' => $posts,'postform'=>$postform->createView()));
     }
 
     /**
@@ -146,7 +166,7 @@ class BlogController extends Controller
      */
     public function editAction(Post $post, Request $request)
     {
-        if (null === $this->getUser() || !in_array('ROLE_ADMIN',$this->getUser()->getRoles()) || (!$post->isAuthor($this->getUser()) && in_array('ROLE_EDITOR',$this->getUser()->getRoles()))) {
+        if (null === $this->getUser() || !$this->getUser()->hasRole('ROLE_ADMIN') || (!$post->isAuthor($this->getUser()) && !$this->getUser()->hasRole('ROLE_EDITOR'))) {
             $this->addFlash('error', 'Posts can only be edited by their authors.');
             return $this->redirectToRoute('admin_post_index');
         }
@@ -159,6 +179,7 @@ class BlogController extends Controller
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             $post->setSlug($this->get('slugger')->slugify($post->getTitle()));
+            $post->setUpdatedAt(new \DateTime());
             $entityManager->flush();
 
             $this->addFlash('success', 'post.updated_successfully');

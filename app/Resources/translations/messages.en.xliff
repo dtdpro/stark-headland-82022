@@ -157,6 +157,10 @@
                 <source>label.save_and_create_new</source>
                 <target>Save and create new</target>
             </trans-unit>
+            <trans-unit id="label.save_and_close">
+                <source>label.save_and_close</source>
+                <target>Save and close</target>
+            </trans-unit>
             <trans-unit id="action.back_to_list">
                 <source>action.back_to_list</source>
                 <target>Back to the post list</target>
@@ -214,9 +218,17 @@
                 <source>label.summary</source>
                 <target>Summary</target>
             </trans-unit>
+            <trans-unit id="label.status">
+                <source>label.status</source>
+                <target>Status</target>
+            </trans-unit>
             <trans-unit id="label.published_at">
                 <source>label.published_at</source>
                 <target>Published at</target>
+            </trans-unit>
+            <trans-unit id="label.updated_at">
+                <source>label.updated_at</source>
+                <target>Updated at</target>
             </trans-unit>
             <trans-unit id="label.actions">
                 <source>label.actions</source>

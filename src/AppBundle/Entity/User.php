@@ -123,6 +123,11 @@ class User implements UserInterface
         $this->roles = $roles;
     }
 
+    public function hasRole($role)
+    {
+        return in_array($role,$this->getRoles());
+    }
+
     /**
      * Returns the salt that was originally used to encode the password.
      */

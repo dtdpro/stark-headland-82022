@@ -12,6 +12,7 @@
 namespace AppBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use AppBundle\Entity\User;
 
 /**
  * This custom Doctrine repository contains some methods which are useful when
@@ -23,19 +24,6 @@ use Doctrine\ORM\EntityRepository;
  */
 class PostRepository extends EntityRepository
 {
-    public function queryLatest()
-    {
-        return $this->getEntityManager()
-            ->createQuery('
-                SELECT p
-                FROM AppBundle:Post p
-                WHERE p.publishedAt <= :now
-                ORDER BY p.publishedAt DESC
-            ')
-            ->setParameter('now', new \DateTime())
-        ;
-    }
-
     public function findLatest()
     {
         $this->queryLatest()->getResult();

@@ -72,6 +72,18 @@ class Post
     private $publishedAt;
 
     /**
+     * @ORM\Column(type="datetime")
+     * @Assert\DateTime()
+     */
+    private $updatedAt;
+
+    /**
+     * @ORM\Column(type="smallint")
+     * @Assert\NotBlank()
+     */
+    private $status=1;
+
+    /**
      * @ORM\OneToMany(
      *      targetEntity="Comment",
      *      mappedBy="post",
@@ -84,6 +96,7 @@ class Post
     public function __construct()
     {
         $this->publishedAt = new \DateTime();
+        $this->updatedAt = new \DateTime();
         $this->comments = new ArrayCollection();
     }
 
@@ -170,26 +183,52 @@ class Post
         $this->summary = $summary;
     }
 
-    /**
-     * Set user
-     *
-     * @param \AppBundle\Entity\User $user
-     * @return Deck
-     */
     public function setUser(\AppBundle\Entity\User $user = null)
     {
         $this->user = $user;
-
         return $this;
     }
 
-    /**
-     * Get user
-     *
-     * @return \AppBundle\Entity\User
-     */
     public function getUser()
     {
         return $this->user;
+    }
+
+    public function getStatus() {
+        return $this->status;
+    }
+
+    public function getStatusText() {
+        switch ($this->status) {
+            case -1: $status = 'Trashed'; break;
+            case  0: $status = 'Unpublished'; break;
+            case  1: $status = 'Published'; break;
+            case  2: $status = 'Archived'; break;
+            case  3: $status = 'Review'; break;
+        }
+        return $status;
+    }
+
+    public function getStatusIcon() {
+        switch ($this->status) {
+            case -1: $status = '<i class="fa fa-trash"></i>'; break;
+            case  0: $status = '<i class="fa fa-close"></i>'; break;
+            case  1: $status = '<i class="fa fa-check"></i>'; break;
+            case  2: $status = '<i class="fa fa-archive"></i>'; break;
+            case  3: $status = '<i class="fa fa-commenting"></i>'; break;
+        }
+        return $status;
+    }
+
+    public function setStatus( $status ) {
+        $this->status = $status;
+    }
+
+    public function getUpdatedAt() {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt( $updatedAt ) {
+        $this->updatedAt = $updatedAt;
     }
 }

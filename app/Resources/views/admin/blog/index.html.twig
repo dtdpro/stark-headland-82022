@@ -5,13 +5,20 @@
 {% block main %}
     <h1>{{ 'title.post_list'|trans }}</h1>
 
+    <script type="text/javascript">
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+    </script>
     <table class="table table-striped">
         <thead>
             <tr>
                 <th>{{ 'label.id'|trans }}</th>
                 <th>{{ 'label.title'|trans }}</th>
+                <th><i class="fa fa-check"></i> {{ 'label.status'|trans }}</th>
                 <th><i class="fa fa-user"></i> {{ 'label.author'|trans }}</th>
                 <th><i class="fa fa-calendar"></i> {{ 'label.published_at'|trans }}</th>
+                <th><i class="fa fa-calendar"></i> {{ 'label.updated_at'|trans }}</th>
                 <th><i class="fa fa-comments"></i> {{ 'label.comments'|trans }}</th>
                 <th><i class="fa fa-cogs"></i> {{ 'label.actions'|trans }}</th>
             </tr>
@@ -21,8 +28,10 @@
             <tr>
                 <td>{{ post.id }}</td>
                 <td><a href="{% if post.isAuthor(app.user) or 'ROLE_ADMIN' in app.user.roles %}{{ path('admin_post_edit', { id: post.id }) }}{% else %}{{ path('admin_post_show', { id: post.id }) }}{% endif %}">{{ post.title }}</a></td>
+                <td class="text-center"><div data-toggle="tooltip" title="{{ post.statusText }}">{{ post.statusIcon|raw }}</div></td>
                 <td>{{ post.user }}</td>
                 <td>{% if post.publishedAt %}{{ post.publishedAt|localizeddate('short', 'short') }}{% endif %}</td>
+                <td>{% if post.updatedAt %}{{ post.updatedAt|localizeddate('short', 'short') }}{% endif %}</td>
                 <td>{{ post.comments|length }}</td>
                 <td>
                     <div class="item-actions">
@@ -40,7 +49,7 @@
             </tr>
         {% else %}
             <tr>
-                <td colspan="4" align="center">{{ 'post.no_posts_found'|trans }}</td>
+                <td colspan="8" align="center">{{ 'post.no_posts_found'|trans }}</td>
            </tr>
         {% endfor %}
         </tbody>
@@ -49,6 +58,7 @@
     <div class="navigation text-center">
         {{ knp_pagination_render(posts) }}
     </div>
+
 {% endblock %}
 
 {% block sidebar %}
@@ -56,6 +66,15 @@
         <a href="{{ path('admin_post_new') }}" class="btn btn-lg btn-block btn-success">
             <i class="fa fa-plus"></i> {{ 'action.create_post'|trans }}
         </a>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Filters</div>
+        <div class="panel-body">
+            {{ form_start(postform) }}
+            {{ form_widget(postform) }}
+            {{ form_end(postform) }}
+        </div>
     </div>
 
     {{ parent() }}
