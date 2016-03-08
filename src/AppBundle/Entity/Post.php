@@ -78,7 +78,7 @@ class Post
     private $updatedAt;
 
     /**
-     * @ORM\Column(type="smallint")
+     * @ORM\Column(type="smallint",nullable=true)
      * @Assert\NotBlank()
      */
     private $status=1;
