@@ -9,6 +9,16 @@
 
 {% if app.session.started %}
     <div class="messages">
+        {% for message in app.session.flashBag.get('notice') %}
+            {# Bootstrap alert, see http://getbootstrap.com/components/#alerts #}
+            <div class="alert alert-dismissible alert-info" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+
+                {{ message|trans }}
+            </div>
+        {% endfor %}
         {% for message in app.session.flashBag.get('success') %}
             {# Bootstrap alert, see http://getbootstrap.com/components/#alerts #}
             <div class="alert alert-dismissible alert-success" role="alert">
