@@ -10,9 +10,11 @@
             $('[data-toggle="tooltip"]').tooltip()
         })
     </script>
+    <form action="{{ path('admin_post_bulk') }}" method="post" id="adminListForm" name="adminListForm">
     <table class="table table-striped">
         <thead>
             <tr>
+                <th><input type="checkbox" id="checkAll"/></th>
                 <th>{{ 'label.id'|trans }}</th>
                 <th>{{ 'label.title'|trans }}</th>
                 <th><i class="fa fa-check"></i> {{ 'label.status'|trans }}</th>
@@ -26,6 +28,7 @@
         <tbody>
         {% for post in posts %}
             <tr>
+                <td><input name="cid[]" value="{{ post.id }}" type="checkbox" class="adminRowCB"></td>
                 <td>{{ post.id }}</td>
                 <td><a href="{% if post.isAuthor(app.user) or 'ROLE_ADMIN' in app.user.roles %}{{ path('admin_post_edit', { id: post.id }) }}{% else %}{{ path('admin_post_show', { id: post.id }) }}{% endif %}">{{ post.title }}</a></td>
                 <td class="text-center"><div data-toggle="tooltip" title="{{ post.statusText }}">{{ post.statusIcon|raw }}</div></td>
@@ -54,7 +57,26 @@
         {% endfor %}
         </tbody>
     </table>
-
+    <div class="form-inline">
+        <div class="form-group">
+            <label class="sr-only" for="setStatus">Action</label>
+            <select class="form-control" name="setStatus" id="setStatus">
+                <option value="-99">--Set Status--</option>
+                <option value="-1">Trash</option>
+                <option value="0">Unpublish</option>
+                <option value="1">Publish</option>
+                <option value="2">Archive</option>
+                <option value="3">Review</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-default" onclick="$('#adminListForm').submit();">Apply</button>
+    </div>
+    </form>
+    <script type="text/javascript">
+        $("#checkAll").change(function () {
+            $(".adminRowCB").prop('checked', $(this).prop("checked"));
+        });
+    </script>
     <div class="navigation text-center">
         {{ knp_pagination_render(posts) }}
     </div>

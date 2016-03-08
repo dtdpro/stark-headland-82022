@@ -19,6 +19,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use AppBundle\Entity\Post;
 use AppBundle\Entity\PostList;
 use AppBundle\Form\Admin\PostListType;
+use AppBundle\Form\Admin\PostBulkType;
 
 /**
  * Controller used to manage blog contents in the backend.
@@ -54,20 +55,23 @@ class BlogController extends Controller
      */
     public function indexAction($page, Request $request)
     {
+        // Filters
         if (!$postlist = $this->get('session')->get('admin.postlist')) {
             $postlist = new PostList();
         }
         $postform = $this->createForm(PostListType::class, $postlist);
-
         $postform->handleRequest($request);
+        $this->get('session')->set('admin.postlist',$postlist);
 
+        // Query
         $repository = $this->getDoctrine()->getRepository('AppBundle:Post');
-
         $queryBuilder = $repository->createQueryBuilder('p');
         $queryBuilder ->orderBy($postlist->getOrderBy(), $postlist->getOrderDir());
 
         if ($postlist->getStatus() != -99) {
             $queryBuilder->andWhere('p.status = :status')->setParameter('status', $postlist->getStatus());
+        } else {
+            $queryBuilder->andWhere('p.status >= :status')->setParameter('status', 0);
         }
 
         if ($postlist->getSearchTitle()) {
@@ -79,9 +83,45 @@ class BlogController extends Controller
         $posts = $paginator->paginate($query, $page, $postlist->getNumListItems());
         $posts->setUsedRoute('admin_post_index_paginated');
 
-        $this->get('session')->set('admin.postlist',$postlist);
-
         return $this->render('admin/blog/index.html.twig', array('posts' => $posts,'postform'=>$postform->createView()));
+    }
+
+    /**
+     * Bulk Action Processor
+     *
+     * This controller responds to two different routes with the same URL:
+     *   * 'admin_post_index' is the route with a name that follows the same
+     *     structure as the rest of the controllers of this class.
+     *   * 'admin_index' is a nice shortcut to the backend homepage. This allows
+     *     to create simpler links in the templates. Moreover, in the future we
+     *     could move this annotation to any other controller while maintaining
+     *     the route name and therefore, without breaking any existing link.
+     *
+     * @Route("/bulkact", name="admin_post_bulk", defaults={"page" = 1})
+     * @Method({"POST"})
+     */
+    public function bulkAction(Request $request)
+    {
+        if (null === $this->getUser() || !$this->getUser()->hasRole('ROLE_ADMIN')) {
+            $this->addFlash('error', 'Post(s) can only be changed in bulk by admins.');
+            return $this->redirectToRoute('admin_post_index');
+        }
+
+        $cids = $request->request->get('cid');
+        $setStatus = $request->request->get('setStatus');
+        $repo = $this->getDoctrine()->getRepository('AppBundle:Post');
+
+        foreach ($cids as $p) {
+            $post = $repo->find($p);
+            $post->setStatus($setStatus);
+
+            $em = $this->getDoctrine()->getManager();
+
+            $em->persist($post);
+            $em->flush();
+        }
+        $this->addFlash('notice', 'Post(s) status changed.');
+        return $this->redirectToRoute('admin_post_index');
     }
 
     /**
@@ -199,7 +239,6 @@ class BlogController extends Controller
      *
      * @Route("/{id}", name="admin_post_delete")
      * @Method("DELETE")
-     * @Security("post.isAuthor(user)")
      *
      * The Security annotation value is an expression (if it evaluates to false,
      * the authorization mechanism will prevent the user accessing this resource).
@@ -207,6 +246,11 @@ class BlogController extends Controller
      */
     public function deleteAction(Request $request, Post $post)
     {
+        if (null === $this->getUser() || !$this->getUser()->hasRole('ROLE_ADMIN') || (!$post->isAuthor($this->getUser()) && !$this->getUser()->hasRole('ROLE_EDITOR'))) {
+            $this->addFlash('error', 'Posts can only be deleted by their authors or an admin.');
+            return $this->redirectToRoute('admin_post_index');
+        }
+
         $form = $this->createDeleteForm($post);
         $form->handleRequest($request);
 
