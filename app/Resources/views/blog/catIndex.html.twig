@@ -1,12 +1,11 @@
 {% extends 'base.html.twig' %}
 
-{% block body_id 'blog_index' %}
+{% block body_id 'blog_category_index' %}
 
 {% block main %}
+    <h1>{{ cat.name }}</h1>
     {% for post in posts %}
-        <article class="post">
-            {% include(':blog:_postitem.html.twig') %}
-        </article>
+        {% include(':blog:_postitem.html.twig') %}
     {% else %}
         <div class="well">{{ 'post.no_posts_found'|trans }}</div>
     {% endfor %}
@@ -22,9 +21,4 @@
     {{ show_source_code(_self) }}
 {% endblock %}
 
-{% macro catTree(category) %}
-    {% if category.parent %}
-        {{ _self.catTree(category.parent) }}
-    {% endif %}
-    <li>{{ category.name }}</li>
-{% endmacro %}
+

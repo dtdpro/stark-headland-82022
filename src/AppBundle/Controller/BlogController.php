@@ -66,6 +66,47 @@ class BlogController extends Controller
     }
 
     /**
+     * @Route("/category/{category}", name="blog_index_category", defaults={"page" = 1})
+     * @Route("/category/{category}/{page}", name="blog_index_category_paginated", requirements={"page" : "\d+"})
+     * @Cache(smaxage="10")
+     */
+    public function categoryAction($category,$page)
+    {
+        $user = $this->getUser();
+
+        $catrepo = $this->getDoctrine()->getRepository('AppBundle:PostCategory');
+        $cat = $catrepo->findOneBy(array('slug'=>$category));
+        $cat_children = $catrepo->getChildren($cat);
+        $cat_children[] = $cat;
+
+        $repository = $this->getDoctrine()->getRepository('AppBundle:Post');
+        $queryBuilder = $repository->createQueryBuilder('p');
+        $queryBuilder ->orderBy('p.publishedAt', 'DESC');
+
+        if (!$user) {
+            $queryBuilder->andWhere('p.status = :status')->setParameter('status', '1');
+            $queryBuilder->andWhere('p.publishedAt <= :now')->setParameter('now', new \DateTime());
+        } else if ($user->hasRole('ROLE_ADMIN')) {
+            $queryBuilder->andWhere('p.status >= :status')->setParameter('status', '0');
+        } else if ($user->hasRole('ROLE_EDITOR')) {
+            $queryBuilder->andWhere('p.status >= :status')->setParameter('status', '1');
+        } else {
+            $queryBuilder->andWhere('p.status = :status')->setParameter('status', '1');
+            $queryBuilder->andWhere('p.publishedAt <= :now')->setParameter('now', new \DateTime());
+        }
+        $queryBuilder->andWhere('p.category  IN (:cats)')->setParameter('cats', $cat);
+        $queryBuilder->orWhere('p.category  IN (:cats)')->setParameter('cats', $cat_children);
+
+        $query = $queryBuilder->getQuery();
+
+        $paginator = $this->get('knp_paginator');
+        $posts = $paginator->paginate($query, $page, Post::NUM_ITEMS);
+        $posts->setUsedRoute('blog_index_category_paginated');
+
+        return $this->render('blog/catIndex.html.twig', array('posts' => $posts,'cat'=>$cat));
+    }
+
+    /**
      * @Route("/posts/{slug}", name="blog_post")
      *
      * NOTE: The $post controller argument is automatically injected by Symfony
