@@ -42,6 +42,17 @@ class PostType extends AbstractType
         //     $builder->add('title', null, array('required' => false, ...));
 
         $builder
+            ->add('title', null, array(
+                'attr' => array('autofocus' => true),
+                'label' => 'label.title',
+            ))
+            ->add('category', null, array(
+                'label' => 'label.category',
+                'query_builder' => function(NestedTreeRepository $er) {
+                    return $er->getNodesHierarchyQueryBuilder();
+                },
+                'required' => true,
+            ))
             ->add('status', ChoiceType::class,array(
                 'choices'  => array(
                     'Trashed' => '-1',
@@ -52,16 +63,6 @@ class PostType extends AbstractType
                 ),
                 'label' => 'label.status',
                 'choices_as_values' => true,
-            ))
-            ->add('category', null, array(
-                'label' => 'label.category',
-                'query_builder' => function(NestedTreeRepository $er) {
-                    return $er->getNodesHierarchyQueryBuilder();
-                },
-            ))
-            ->add('title', null, array(
-                'attr' => array('autofocus' => true),
-                'label' => 'label.title',
             ))
             ->add('summary', 'Symfony\Component\Form\Extension\Core\Type\TextareaType', array('label' => 'label.summary'))
             ->add('content', null, array(
