@@ -1,0 +1,49 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block body_id 'admin_category_show' %}
+
+{% block com_title %}View category #{{ cat.id }}{% endblock %}
+
+{% block com_actions %}
+    <ul class="nav navbar-nav navbar-right">
+        <li><a href="{{ path('admin_category_index') }}"><i class="fa fa-chevron-left"></i> Back to category list</a></li>
+        <li><a href="{{ path('admin_category_edit', { id: cat.id }) }}"><i class="fa fa-edit"></i> Edit Category</a></li>
+    </ul>
+{% endblock %}
+
+{% block main %}
+    <h1>{{ can.name }}</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Parent</th>
+                <td>{{ cat.parent.name }}</td>
+            </tr>
+            <tr>
+                <th>{{ 'label.published_at'|trans }}</th>
+                <td><p>{{ cat.createdAt|localizeddate('long', 'medium') }}</p></td>
+            </tr>
+            <tr>
+                <th>{{ 'label.updated_at'|trans }}</th>
+                <td><p>{{ cat.updatedAt|localizeddate('long', 'medium') }}</p></td>
+            </tr>
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block sidebar %}
+
+    <div class="section">
+        {{ include('admin/postcategory/_form.html.twig', {
+            form: delete_form,
+            button_label: 'Delete Category',
+            button_css: 'btn btn-lg btn-block btn-danger',
+            show_confirmation: true,
+        }, with_context = false) }}
+    </div>
+{% endblock %}
+
+{% block bot_right %}
+    {{ show_source_code(_self) }}
+{% endblock %}

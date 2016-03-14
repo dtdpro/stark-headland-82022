@@ -11,6 +11,7 @@
 
 namespace AppBundle\Controller\Admin;
 
+use AppBundle\Controller\AdminController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -19,12 +20,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use AppBundle\Entity\User;
 
 /**
- * Controller used to manage blog contents in the backend.
- *
- * Please note that the application backend is developed manually for learning
- * purposes. However, in your real Symfony application you should use any of the
- * existing bundles that let you generate ready-to-use backends without effort.
- * See http://knpbundles.com/keyword/admin
+ * Controller used to manage users in the backend.
  *
  * @Route("/admin/user")
  * @Security("has_role('ROLE_ADMIN')")
@@ -32,7 +28,7 @@ use AppBundle\Entity\User;
  * @author Ryan Weaver <weaverryan@gmail.com>
  * @author Javier Eguiluz <javier.eguiluz@gmail.com>
  */
-class UserController extends Controller
+class UserController extends AdminController
 {
     /**
      * Lists all User entities.
@@ -50,7 +46,7 @@ class UserController extends Controller
      */
     public function indexAction()
     {
-        if (null === $this->getUser() || !in_array('ROLE_ADMIN',$this->getUser()->getRoles())) {
+        if (null === $this->getUser() || !$this->hasRole('ROLE_ADMIN')) {
             $this->addFlash('error', 'Users can only be viewed by administrators.');
             return $this->redirectToRoute('admin_index');
         }
@@ -73,7 +69,7 @@ class UserController extends Controller
      */
     public function newAction(Request $request)
     {
-        if (null === $this->getUser() || !in_array('ROLE_ADMIN',$this->getUser()->getRoles())) {
+        if (null === $this->getUser() || !$this->hasRole('ROLE_ADMIN')) {
             $this->addFlash('error', 'Users can only be created by administrators.');
             return $this->redirectToRoute('admin_user_index');
         }
@@ -92,9 +88,9 @@ class UserController extends Controller
         // See http://symfony.com/doc/current/best_practices/forms.html#handling-form-submits
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $encoder = $this->get('security.password_encoder');
-            $encodedPassword = $encoder->encodePassword($user, $user->getPlainPassword());
-            $user->setPassword($encodedPassword);
+
+            $userManager = $this->get('fos_user.user_manager');
+            $userManager->updatePassword($user);
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($user);
@@ -127,7 +123,7 @@ class UserController extends Controller
      */
     public function showAction(User $user)
     {
-        if (null === $this->getUser() || !in_array('ROLE_ADMIN',$this->getUser()->getRoles())) {
+        if (null === $this->getUser() || !$this->hasRole('ROLE_ADMIN')) {
             $this->addFlash('error', 'Users can only be viewed by administrators.');
             return $this->redirectToRoute('admin_user_index');
         }
@@ -148,12 +144,13 @@ class UserController extends Controller
      */
     public function editAction(User $user, Request $request)
     {
-        if (null === $this->getUser() || !in_array('ROLE_ADMIN',$this->getUser()->getRoles())) {
+        if (null === $this->getUser() || !$this->hasRole('ROLE_ADMIN')) {
             $this->addFlash('error', 'Users can only be edited by administrators.');
             return $this->redirectToRoute('admin_user_index');
         }
 
         $entityManager = $this->getDoctrine()->getManager();
+        $userManager = $this->get('fos_user.user_manager');
 
         $editForm = $this->createForm('AppBundle\Form\UserType', $user);
         $deleteForm = $this->createDeleteForm($user);
@@ -162,11 +159,7 @@ class UserController extends Controller
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
 
-            if($user->getPlainPassword()) {
-                $encoder         = $this->get( 'security.password_encoder' );
-                $encodedPassword = $encoder->encodePassword( $user, $user->getPlainPassword() );
-                $user->setPassword( $encodedPassword );
-            }
+            $userManager->updatePassword($user);
 
             $entityManager->flush();
 
@@ -194,7 +187,7 @@ class UserController extends Controller
      */
     public function deleteAction(Request $request, User $user)
     {
-        if (null === $this->getUser() || !in_array('ROLE_ADMIN',$this->getUser()->getRoles())) {
+        if (null === $this->getUser() || !$this->hasRole('ROLE_ADMIN')) {
             $this->addFlash('error', 'Users can only be deleted by administrators.');
             return $this->redirectToRoute('admin_user_index');
         }

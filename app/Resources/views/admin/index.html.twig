@@ -1,0 +1,27 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block body_id 'admin_index' %}
+
+{% block com_title %}Admin{% endblock %}
+
+{% block com_actions %}
+
+{% endblock %}
+
+{% block main %}
+
+<p>Welcome to the admin panel.</p>
+    <div class="list-group">
+        <a href="{{ path('admin_post_index') }}" class="list-group-item"><i class="fa fa-list-alt"></i> {{ 'menu.post_list'|trans }}</a>
+        <a href="{{ path('admin_category_index') }}" class="list-group-item"><i class="fa fa-tag"></i> Categories</a>
+        <a href="{{ path('admin_user_index') }}" class="list-group-item"><i class="fa fa-user"></i> Users</a>
+    </div>
+{% endblock %}
+
+{% block sidebar %}
+    {{ parent() }}
+{% endblock %}
+
+{% block bot_right %}
+    {{ show_source_code(_self) }}
+{% endblock %}

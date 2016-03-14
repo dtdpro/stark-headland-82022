@@ -4,8 +4,13 @@
 
 {% block main %}
     <h1>{{ post.title }}</h1>
+    <p>{{ post.publishedAt|localizeddate('long', 'medium') }} by <strong>{{ post.user }}</strong></p>
+    <ul class="breadcrumb">
+        {{ _self.catTree(post.category) }}
+    </ul>
 
     {{ post.content|md2html }}
+    <h6>Last Updated: {{ post.updatedAt|localizeddate('long', 'medium') }}</h6>
 
     <div id="post-add-comment" class="well">
         {# The 'IS_AUTHENTICATED_FULLY' role ensures that the user has entered
@@ -61,3 +66,10 @@
 
     {{ show_source_code(_self) }}
 {% endblock %}
+
+{% macro catTree(category) %}
+    {% if category.parent %}
+        {{ _self.catTree(category.parent) }}
+    {% endif %}
+    <li>{{ category.name }}</li>
+{% endmacro %}

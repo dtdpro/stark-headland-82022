@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block body_id 'profile' %}
+
+{% block title %}User Profile{% endblock %}
+
+{% block main %}
+    <h2>User Profile</h2>
+    <table class="table">
+        <tr>
+            <td><strong>Name</strong></td>
+            <td>{{ user.firstName }} {{ user.lastName }}</td>
+        </tr>
+        <tr>
+            <td><strong>{{ 'profile.show.username'|trans({}, 'FOSUserBundle') }}</strong></td>
+            <td>{{ user.username }}</td>
+        </tr>
+        <tr>
+            <td><strong>{{ 'profile.show.email'|trans({}, 'FOSUserBundle') }}</strong></td>
+            <td>{{ user.email }}</td>
+        </tr>
+    </table>
+{% endblock %}
+
+{% block sidebar %}
+    <a href="{{ path('fos_user_profile_edit') }}" class="btn btn-primary btn-block"><i class="uk-icon-edit"></i> Edit Profile</a><br>
+    <a href="{{ path('fos_user_change_password') }}" class="btn btn-default btn-block"><i class="uk-icon-key"></i> Change Password</a>
+    {{ parent() }}
+
+    {{ show_source_code(_self) }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}
+

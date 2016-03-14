@@ -43,9 +43,17 @@ class UserType extends AbstractType
                 'attr' => array('autofocus' => true),
                 'label' => 'Username',
             ))
+            ->add('first_name', null, array(
+                'attr' => array('autofocus' => true),
+                'label' => 'First Name',
+            ))
+            ->add('last_name', null, array(
+                'attr' => array('autofocus' => true),
+                'label' => 'Last Name',
+            ))
             ->add('email', null, array('label' => 'Email'))
             ->add('plainPassword', 'repeated', array('type' => 'password','required'=>false,'first_options' => array('label' => 'Password'),'second_options' => array('label' => 'Confirm Password'),'invalid_message' => 'Passwords do not match',))
-            ->add('roles', 'choice', array('choices'=>array('ROLE_USER'=>'Registered User','ROLE_EDITOR'=>'Editor','ROLE_ADMIN'=>'Administrator'), 'expanded'=>true, 'multiple'=>true, 'label' => 'Roles'));
+            ->add('roles', 'choice', array('choices'=>array('ROLE_USER'=>'Registered User','ROLE_EDITOR'=>'Editor','ROLE_ADMIN'=>'Administrator','ROLE_SUPER_ADMIN'=>'Super Administrator'), 'expanded'=>true, 'multiple'=>true, 'label' => 'Roles'));
     }
 
     /**

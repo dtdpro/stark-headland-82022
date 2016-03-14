@@ -92,6 +92,10 @@
                 <source>title.edit_post</source>
                 <target>Edit post #%id%</target>
             </trans-unit>
+            <trans-unit id="title.view_post">
+                <source>title.view_post</source>
+                <target>View post #%id%</target>
+            </trans-unit>
             <trans-unit id="title.edit_user">
                 <source>title.edit_user</source>
                 <target>Edit user #%id%</target>
@@ -190,9 +194,17 @@
                 <source>label.title</source>
                 <target>Title</target>
             </trans-unit>
+            <trans-unit id="label.slug">
+                <source>label.slug</source>
+                <target>Slug</target>
+            </trans-unit>
             <trans-unit id="label.author">
                 <source>label.author</source>
                 <target>Author</target>
+            </trans-unit>
+            <trans-unit id="label.category">
+                <source>label.category</source>
+                <target>Category</target>
             </trans-unit>
             <trans-unit id="label.comments">
                 <source>label.comments</source>
@@ -267,6 +279,10 @@
                 <source>menu.login</source>
                 <target>Login</target>
             </trans-unit>
+            <trans-unit id="menu.register">
+                <source>menu.register</source>
+                <target>Register</target>
+            </trans-unit>
 
             <trans-unit id="post.to_publish_a_comment">
                 <source>post.to_publish_a_comment</source>
@@ -303,7 +319,7 @@
 
             <trans-unit id="help.app_description">
                 <source>help.app_description</source>
-                <target><![CDATA[This is a <strong>demo application</strong> built in the Symfony Framework to illustrate the recommended way of developing Symfony applications.]]></target>
+                <target><![CDATA[This is a <strong>demo application</strong> built in the Symfony Framework to illustrate the recommended way of developing Symfony applications based upon the Symdony Demo Application. ]]></target>
             </trans-unit>
             <trans-unit id="help.show_code">
                 <source>help.show_code</source>
@@ -353,6 +369,10 @@
             <trans-unit id="ROLE_ADMIN">
                 <source>ROLE_ADMIN</source>
                 <target>Administrator</target>
+            </trans-unit>
+            <trans-unit id="ROLE_SUPER_ADMIN">
+                <source>ROLE_SUPER_ADMIN</source>
+                <target>Super Administrator</target>
             </trans-unit>
         </body>
     </file>

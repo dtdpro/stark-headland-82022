@@ -8,12 +8,17 @@
 {% extends 'admin.html.twig' %}
 
 {% block header_navigation_links %}
-    <li>
+    <li class="{% if 'post' in app.request.attributes.get('_route') %} active{% endif %}">
         <a href="{{ path('admin_post_index') }}">
             <i class="fa fa-list-alt"></i> {{ 'menu.post_list'|trans }}
         </a>
     </li>
-    <li>
+    <li class="{% if 'category' in app.request.attributes.get('_route') %} active{% endif %}">
+        <a href="{{ path('admin_category_index') }}">
+            <i class="fa fa-tag"></i> Categories
+        </a>
+    </li>
+    <li class="{% if 'user' in app.request.attributes.get('_route') %} active{% endif %}">
         <a href="{{ path('admin_user_index') }}">
             <i class="fa fa-user"></i> Users
         </a>

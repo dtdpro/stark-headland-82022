@@ -93,6 +93,14 @@ class Post
      */
     private $comments;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="PostCategory", inversedBy="posts")
+     * @ORM\JoinColumn(name="cat_id", referencedColumnName="id")
+     */
+    private $category;
+
+
+
     public function __construct()
     {
         $this->publishedAt = new \DateTime();
@@ -230,5 +238,13 @@ class Post
 
     public function setUpdatedAt( $updatedAt ) {
         $this->updatedAt = $updatedAt;
+    }
+
+    public function getCategory() {
+        return $this->category;
+    }
+
+    public function setCategory( $category ) {
+        $this->category = $category;
     }
 }

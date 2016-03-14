@@ -2,9 +2,15 @@
 
 {% block body_id 'admin_post_edit' %}
 
-{% block main %}
-    <h1>{{ 'title.edit_post'|trans({'%id%': post.id}) }}</h1>
+{% block com_title %}{{ 'title.edit_post'|trans({'%id%': post.id}) }}{% endblock %}
 
+{% block com_actions %}
+    <ul class="nav navbar-nav navbar-right">
+        <li><a href="{{ path('admin_post_index') }}"><i class="fa fa-chevron-left"></i> {{ 'action.back_to_list'|trans }}</a></li>
+    </ul>
+{% endblock %}
+
+{% block main %}
     {{ include('default/_flash_messages.html.twig') }}
 
     {{ include('admin/blog/_form.html.twig', {
@@ -25,6 +31,8 @@
     </div>
 
     {{ parent() }}
+{% endblock %}
 
+{% block bot_right %}
     {{ show_source_code(_self) }}
 {% endblock %}

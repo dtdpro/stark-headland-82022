@@ -2,11 +2,24 @@
 
 {% block body_id 'admin_post_show' %}
 
+{% block com_title %}{{ 'title.view_post'|trans({'%id%': post.id}) }}{% endblock %}
+
+{% block com_actions %}
+    <ul class="nav navbar-nav navbar-right">
+        <li><a href="{{ path('admin_post_index') }}"><i class="fa fa-chevron-left"></i> {{ 'action.back_to_list'|trans }}</a></li>
+        <li><a href="{{ path('admin_post_edit', { id: post.id }) }}"><i class="fa fa-edit"></i> {{ 'action.edit_contents'|trans }}</a></li>
+    </ul>
+{% endblock %}
+
 {% block main %}
     <h1>{{ post.title }}</h1>
 
     <table class="table">
         <tbody>
+            <tr>
+                <th>{{ 'label.category'|trans }}</th>
+                <td>{{ post.category }}</td>
+            </tr>
             <tr>
                 <th>{{ 'label.summary'|trans }}</th>
                 <td>{{ post.summary|md2html }}</td>
@@ -17,22 +30,21 @@
             </tr>
             <tr>
                 <th>{{ 'label.author'|trans }}</th>
-                <td><p>{{ post.authorEmail }}</p></td>
+                <td><p>{{ post.user }}</p></td>
             </tr>
             <tr>
                 <th>{{ 'label.published_at'|trans }}</th>
                 <td><p>{{ post.publishedAt|localizeddate('long', 'medium') }}</p></td>
+            </tr>
+            <tr>
+                <th>{{ 'label.updated_at'|trans }}</th>
+                <td><p>{{ post.updatedAt|localizeddate('long', 'medium') }}</p></td>
             </tr>
         </tbody>
     </table>
 {% endblock %}
 
 {% block sidebar %}
-    <div class="section">
-        <a href="{{ path('admin_post_edit', { id: post.id }) }}" class="btn btn-lg btn-block btn-success">
-            <i class="fa fa-edit"></i> {{ 'action.edit_contents'|trans }}
-        </a>
-    </div>
 
     <div class="section">
         {{ include('admin/blog/_form.html.twig', {
@@ -42,6 +54,8 @@
             show_confirmation: true,
         }, with_context = false) }}
     </div>
+{% endblock %}
 
+{% block bot_right %}
     {{ show_source_code(_self) }}
 {% endblock %}

@@ -15,6 +15,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
 
 
 /**
@@ -51,6 +52,12 @@ class PostType extends AbstractType
                 ),
                 'label' => 'label.status',
                 'choices_as_values' => true,
+            ))
+            ->add('category', null, array(
+                'label' => 'label.category',
+                'query_builder' => function(NestedTreeRepository $er) {
+                    return $er->getNodesHierarchyQueryBuilder();
+                },
             ))
             ->add('title', null, array(
                 'attr' => array('autofocus' => true),

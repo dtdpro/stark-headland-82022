@@ -11,6 +11,8 @@
 
 namespace AppBundle\Controller\Admin;
 
+use AppBundle\Controller\AdminController;
+use AppBundle\Entity\PostCategory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -35,7 +37,7 @@ use AppBundle\Form\Admin\PostBulkType;
  * @author Ryan Weaver <weaverryan@gmail.com>
  * @author Javier Eguiluz <javier.eguiluz@gmail.com>
  */
-class BlogController extends Controller
+class BlogController extends AdminController
 {
     /**
      * Lists all Post entities.
@@ -48,42 +50,57 @@ class BlogController extends Controller
      *     could move this annotation to any other controller while maintaining
      *     the route name and therefore, without breaking any existing link.
      *
-     * @Route("/", name="admin_index", defaults={"page" = 1})
      * @Route("/", name="admin_post_index", defaults={"page" = 1})
      * @Route("/page/{page}", name="admin_post_index_paginated", requirements={"page" : "\d+"})
      * @Method({"GET", "POST"})
      */
     public function indexAction($page, Request $request)
     {
+        $entityManager = $this->getDoctrine()->getManager();
+        $catrepo = $entityManager->getRepository('AppBundle:PostCategory');
+
         // Filters
-        if (!$postlist = $this->get('session')->get('admin.postlist')) {
-            $postlist = new PostList();
+        if (!$filterlist = $this->get('session')->get('admin.postlist')) {
+            $filterlist = new PostList();
+        } else {
+            if ($filterlist->getCategory()) $entityManager->persist($filterlist->getCategory());
+            if ($filterlist->getUser()) $entityManager->persist($filterlist->getUser());
         }
-        $postform = $this->createForm(PostListType::class, $postlist);
-        $postform->handleRequest($request);
-        $this->get('session')->set('admin.postlist',$postlist);
+        $filterform = $this->createForm(PostListType::class, $filterlist);
+        $filterform->handleRequest($request);
+        $this->get('session')->set('admin.postlist',$filterlist);
 
         // Query
         $repository = $this->getDoctrine()->getRepository('AppBundle:Post');
         $queryBuilder = $repository->createQueryBuilder('p');
-        $queryBuilder ->orderBy($postlist->getOrderBy(), $postlist->getOrderDir());
+        $queryBuilder ->orderBy($filterlist->getOrderBy(), $filterlist->getOrderDir());
 
-        if ($postlist->getStatus() != -99) {
-            $queryBuilder->andWhere('p.status = :status')->setParameter('status', $postlist->getStatus());
+        if ($filterlist->getStatus() != -99) {
+            $queryBuilder->andWhere('p.status = :status')->setParameter('status', $filterlist->getStatus());
         } else {
             $queryBuilder->andWhere('p.status >= :status')->setParameter('status', 0);
         }
 
-        if ($postlist->getSearchTitle()) {
-            $queryBuilder->andWhere('p.title  like :title')->setParameter('title', '%'.$postlist->getSearchTitle().'%');
+        if ($filterlist->getCategory()) {
+            $queryBuilder->andWhere('p.category  = :cat')->setParameter('cat', $filterlist->getCategory());
+        }
+
+        if ($filterlist->getUser()) {
+            $queryBuilder->andWhere('p.user  = :user')->setParameter('user', $filterlist->getUser());
+        }
+
+        if ($filterlist->getSearchTitle()) {
+            $queryBuilder->andWhere('p.title  like :title')->setParameter('title', '%'.$filterlist->getSearchTitle().'%');
         }
 
         $query = $queryBuilder->getQuery();
         $paginator = $this->get('knp_paginator');
-        $posts = $paginator->paginate($query, $page, $postlist->getNumListItems());
+        $posts = $paginator->paginate($query, $page, $filterlist->getNumListItems());
         $posts->setUsedRoute('admin_post_index_paginated');
 
-        return $this->render('admin/blog/index.html.twig', array('posts' => $posts,'postform'=>$postform->createView()));
+        $catlist = $catrepo->getNodesHierarchyQuery()->getResult();
+
+        return $this->render('admin/blog/index.html.twig', array('posts' => $posts,'filterform'=>$filterform->createView(),'catlist'=>$catlist));
     }
 
     /**
@@ -102,18 +119,28 @@ class BlogController extends Controller
      */
     public function bulkAction(Request $request)
     {
-        if (null === $this->getUser() || !$this->getUser()->hasRole('ROLE_ADMIN')) {
+        if (null === $this->getUser() || !$this->hasRole('ROLE_ADMIN')) {
             $this->addFlash('error', 'Post(s) can only be changed in bulk by admins.');
             return $this->redirectToRoute('admin_post_index');
         }
 
         $cids = $request->request->get('cid');
         $setStatus = $request->request->get('setStatus');
-        $repo = $this->getDoctrine()->getRepository('AppBundle:Post');
+        $setCategory = $request->request->get('setCategory');
+        $postrepo = $this->getDoctrine()->getRepository('AppBundle:Post');
+        $catrepo = $this->getDoctrine()->getRepository('AppBundle:PostCategory');
 
         foreach ($cids as $p) {
-            $post = $repo->find($p);
-            $post->setStatus($setStatus);
+            $post = $postrepo->find($p);
+
+            if ($setStatus != '-99') {
+                $post->setStatus( $setStatus );
+            }
+
+            if ($setCategory != '-99') {
+                $cat = $catrepo->find($setCategory);
+                $post->setCategory($cat);
+            }
 
             $em = $this->getDoctrine()->getManager();
 
@@ -136,6 +163,11 @@ class BlogController extends Controller
      */
     public function newAction(Request $request)
     {
+        if (null === $this->getUser() || !$this->hasRole('ROLE_EDITOR')) {
+            $this->addFlash('error', 'Post(s) can only be changed in bulk by admins.');
+            return $this->redirectToRoute('admin_post_index');
+        }
+
         $post = new Post();
         $post->setUser($this->getUser());
 
@@ -186,7 +218,7 @@ class BlogController extends Controller
         // This security check can also be performed:
         //   1. Using an annotation: @Security("post.isAuthor(user)")
         //   2. Using a "voter" (see http://symfony.com/doc/current/cookbook/security/voters_data_permission.html)
-        if (null === $this->getUser() || !$post->isAuthor($this->getUser())) {
+        if (null === $this->getUser()) {
             throw $this->createAccessDeniedException('Posts can only be shown to their authors.');
         }
 
@@ -206,7 +238,7 @@ class BlogController extends Controller
      */
     public function editAction(Post $post, Request $request)
     {
-        if (null === $this->getUser() || !$this->getUser()->hasRole('ROLE_ADMIN') || (!$post->isAuthor($this->getUser()) && !$this->getUser()->hasRole('ROLE_EDITOR'))) {
+        if (null === $this->getUser() || !$this->hasRole('ROLE_ADMIN') || (!$post->isAuthor($this->getUser()) && !$this->hasRole('ROLE_EDITOR'))) {
             $this->addFlash('error', 'Posts can only be edited by their authors.');
             return $this->redirectToRoute('admin_post_index');
         }
@@ -246,7 +278,7 @@ class BlogController extends Controller
      */
     public function deleteAction(Request $request, Post $post)
     {
-        if (null === $this->getUser() || !$this->getUser()->hasRole('ROLE_ADMIN') || (!$post->isAuthor($this->getUser()) && !$this->getUser()->hasRole('ROLE_EDITOR'))) {
+        if (null === $this->getUser() || !$this->hasRole('ROLE_ADMIN') || (!$post->isAuthor($this->getUser()) && !$this->hasRole('ROLE_EDITOR'))) {
             $this->addFlash('error', 'Posts can only be deleted by their authors or an admin.');
             return $this->redirectToRoute('admin_post_index');
         }

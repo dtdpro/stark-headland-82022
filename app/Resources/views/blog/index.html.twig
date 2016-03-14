@@ -10,6 +10,10 @@
                     {{ post.title }}
                 </a>
             </h2>
+            <p>{{ post.publishedAt|localizeddate('long', 'medium') }} by <strong>{{ post.user }}</strong></p>
+            <ul class="breadcrumb">
+                {{ _self.catTree(post.category) }}
+            </ul>
 
             {{ post.summary|md2html }}
         </article>
@@ -27,3 +31,10 @@
 
     {{ show_source_code(_self) }}
 {% endblock %}
+
+{% macro catTree(category) %}
+    {% if category.parent %}
+        {{ _self.catTree(category.parent) }}
+    {% endif %}
+    <li>{{ category.name }}</li>
+{% endmacro %}

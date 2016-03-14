@@ -7,7 +7,7 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>{% block title %}The Demo Application{% endblock %}</title>
+        <title>{% block title %}The Demo Application: Admin{% endblock %}</title>
 
 
         {% block javascripts %}
@@ -39,11 +39,11 @@
 
         {% block header %}
             <header>
-                <div class="navbar navbar-default navbar-static-top" role="navigation">
+                <div class="navbar navbar-default navbar-fixed-top" role="navigation">
                     <div class="container-fluid">
                         <div class="navbar-header">
-                            <a class="navbar-brand" href="{{ path('homepage') }}">
-                                The Demo Application
+                            <a class="navbar-brand" href="{{ path('admin_index') }}">
+                                The Demo Application: Admin
                             </a>
 
                             <button type="button" class="navbar-toggle"
@@ -76,7 +76,7 @@
 
                                 {% if app.user %}
                                     <li>
-                                        <a href="{{ path('security_logout') }}">
+                                        <a href="{{ path('fos_user_security_logout') }}">
                                             <i class="fa fa-sign-out"></i> {{ 'menu.logout'|trans }}
                                         </a>
                                     </li>
@@ -94,10 +94,23 @@
                         </div>
                     </div>
                 </div>
+                <div class="navbar navbar-default navbar-fixed-top navbar-inverse" role="navigation" style="top: 50px;">
+                    <div class="container-fluid">
+                        <div class="navbar-header">
+                            <a class="navbar-brand" href="#">
+                                {% block com_title %}{% endblock %}
+                            </a>
+                        </div>
+                        <div class="navbar-collapse collapse">
+                            {% block com_actions %}{% endblock %}
+                        </div>
+                    </div>
+                </div>
+
             </header>
         {% endblock %}
 
-        <div class="container-fluid body-container">
+        <div class="container-fluid body-container" style="padding-top: 120px;">
             {% block body %}
                 <div class="row">
                     <div id="main" class="col-sm-9">
@@ -108,23 +121,43 @@
 
                     <div id="sidebar" class="col-sm-3">
                         {% block sidebar %}
-                            {{ render_esi(controller('FrameworkBundle:Template:template', {
-                                'template': 'blog/about.html.twig',
-                                'sharedAge': 600,
-                                '_locale': app.request.locale
-                            })) }}
+
                         {% endblock %}
                     </div>
                 </div>
             {% endblock %}
         </div>
 
+        {% block bottom %}
+            <div id="bottom" class="bg-primary">
+                <div class="container">
+                    <div class="row">
+                        <div id="bot_left" class="col-sm-4">
+                            {% block bot_left %}
+                                {{ render_esi(controller('FrameworkBundle:Template:template', {
+                                    'template': 'blog/about.html.twig',
+                                    'sharedAge': 600,
+                                    '_locale': app.request.locale
+                                })) }}
+                            {% endblock %}
+                        </div>
+                        <div id="bot_center" class="col-sm-4">
+                            {% block bot_center %}{% endblock %}
+                        </div>
+                        <div id="bot_right" class="col-sm-4">
+                            {% block bot_right %}{% endblock %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endblock %}
+
         {% block footer %}
             <footer>
                 <div class="container-fluid">
                     <div class="row">
                         <div id="footer-copyright" class="col-md-6">
-                            <p>&copy; {{ 'now'|date('Y') }} - The Symfony Project</p>
+                            <p>&copy; {{ 'now'|date('Y') }} DtD Productions; &copy; {{ 'now'|date('Y') }} The Symfony Project</p>
                             <p>{{ 'mit_license'|trans }} </p>
                         </div>
                         <div id="footer-resources" class="col-md-6">

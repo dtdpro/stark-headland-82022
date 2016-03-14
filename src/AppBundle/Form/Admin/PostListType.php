@@ -17,6 +17,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
 
 /**
  * Defines the form used to create and manipulate blog posts.
@@ -38,7 +40,7 @@ class PostListType extends AbstractType
             ))
             ->add('status', ChoiceType::class,array(
                 'choices'  => array(
-                    '--Any Status--' => '-99',
+                    '' => '-99',
                     'Trashed' => '-1',
                     'Unpublished' => '0',
                     'Published' => '1',
@@ -47,6 +49,17 @@ class PostListType extends AbstractType
                 ),
                 'label' => 'label.status',
                 'choices_as_values' => true,
+            ))
+            ->add('user', EntityType::class, array(
+                'class' => 'AppBundle:User',
+                'required' => false,
+            ))
+            ->add('category', EntityType::class, array(
+                'class' => 'AppBundle:PostCategory',
+                'required' => false,
+                'query_builder' => function(NestedTreeRepository $er) {
+                   return $er->getNodesHierarchyQueryBuilder();
+                },
             ))
             ->add('orderBy', ChoiceType::class,array(
                 'choices'  => array(

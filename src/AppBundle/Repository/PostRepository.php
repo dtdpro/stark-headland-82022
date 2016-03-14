@@ -24,8 +24,5 @@ use AppBundle\Entity\User;
  */
 class PostRepository extends EntityRepository
 {
-    public function findLatest()
-    {
-        $this->queryLatest()->getResult();
-    }
+
 }

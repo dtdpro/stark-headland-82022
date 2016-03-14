@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block body_id 'profile' %}
+
+{% block title %}Edit User Profile{% endblock %}
+
+{% block main %}
+    <h2>Edit User Profile</h2>
+    <form action="{{ path('fos_user_profile_edit') }}" {{ form_enctype(form) }} method="POST" class="uk-form uk-form-horizontal fos_user_profile_edit">
+        {{ form_widget(form) }}
+        <button type="submit" class="btn btn-primary">{{ 'profile.edit.submit'|trans({}, 'FOSUserBundle') }}</button>
+    </form>
+{% endblock %}
+{% block sidebar %}
+    <a href="{{ path('fos_user_change_password') }}" class="btn btn-default btn-block"><i class="uk-icon-key"></i> Change Password</a>
+    {{ parent() }}
+
+    {{ show_source_code(_self) }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}
+

@@ -19,6 +19,10 @@ class PostList
 
     private $searchTitle = '';
 
+    private $user = 0;
+
+    private $category;
+
     public function getNumListItems() {
         return $this->numListItems;
     }
@@ -59,4 +63,19 @@ class PostList
         $this->searchTitle = $searchTitle;
     }
 
+    public function getCategory() {
+        return $this->category;
+    }
+
+    public function setCategory( $category ) {
+        $this->category = $category;
+    }
+
+    public function getUser() {
+        return $this->user;
+    }
+
+    public function setUser( $user ) {
+        $this->user = $user;
+    }
 }

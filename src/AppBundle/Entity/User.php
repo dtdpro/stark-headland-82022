@@ -3,149 +3,51 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\UserInterface;
+use FOS\UserBundle\Entity\User as BaseUser;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ORM\Entity(repositoryClass="AppBundle\Repository\UserRepository")
+ * @ORM\Entity()
  * @ORM\Table(name="symfony_demo_user")
- *
- * Defines the properties of the User entity to represent the application users.
- * See http://symfony.com/doc/current/book/doctrine.html#creating-an-entity-class
- *
- * Tip: if you have an existing database, you can generate these entity class automatically.
- * See http://symfony.com/doc/current/cookbook/doctrine/reverse_engineering.html
- *
- * @author Ryan Weaver <weaverryan@gmail.com>
- * @author Javier Eguiluz <javier.eguiluz@gmail.com>
  */
-class User implements UserInterface
+class User extends BaseUser
 {
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    protected $id;
 
     /**
-     * @ORM\Column(type="string", unique=true)
+     * @ORM\Column(type="string",nullable=true)
+     * @Assert\NotBlank()
      */
-    private $username;
+    private $first_name;
 
     /**
-     * @ORM\Column(type="string", unique=true)
+     * @ORM\Column(type="string",nullable=true)
+     * @Assert\NotBlank()
      */
-    private $email;
-
-    /**
-     * @ORM\Column(type="string")
-     */
-    private $password;
-
-    /**
-     * @ORM\Column(type="json_array")
-     */
-    private $roles = array();
-
-    private $plainPassword;
+    private $last_name;
 
     public function __toString() {
-        return $this->username;
+        return $this->getUsernameCanonical();
     }
 
-    public function getId()
-    {
-        return $this->id;
+    public function getFirstName() {
+        return $this->first_name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getUsername()
-    {
-        return $this->username;
-    }
-    public function setUsername($username)
-    {
-        $this->username = $username;
+    public function setFirstName( $first_name ) {
+        $this->first_name = $first_name;
     }
 
-    public function getEmail()
-    {
-        return $this->email;
-    }
-    public function setEmail($email)
-    {
-        $this->email = $email;
+    public function getLastName() {
+        return $this->last_name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getPassword()
-    {
-        return $this->password;
-    }
-    public function setPassword($password)
-    {
-        $this->password = $password;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getPlainPassword()
-    {
-        return $this->plainPassword;
-    }
-    public function setPlainPassword($password)
-    {
-        $this->plainPassword = $password;
-    }
-
-    /**
-     * Returns the roles or permissions granted to the user for security.
-     */
-    public function getRoles()
-    {
-        $roles = $this->roles;
-
-        // guarantees that a user always has at least one role for security
-        if (empty($roles)) {
-            $roles[] = 'ROLE_USER';
-        }
-
-        return array_unique($roles);
-    }
-
-    public function setRoles(array $roles)
-    {
-        $this->roles = $roles;
-    }
-
-    public function hasRole($role)
-    {
-        return in_array($role,$this->getRoles());
-    }
-
-    /**
-     * Returns the salt that was originally used to encode the password.
-     */
-    public function getSalt()
-    {
-        // See "Do you need to use a Salt?" at http://symfony.com/doc/current/cookbook/security/entity_provider.html
-        // we're using bcrypt in security.yml to encode the password, so
-        // the salt value is built-in and you don't have to generate one
-
-        return;
-    }
-
-    /**
-     * Removes sensitive data from the user.
-     */
-    public function eraseCredentials()
-    {
-        // if you had a plainPassword property, you'd nullify it here
-        // $this->plainPassword = null;
+    public function setLastName( $last_name ) {
+        $this->last_name = $last_name;
     }
 }
