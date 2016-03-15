@@ -36,6 +36,12 @@ class Post
     private $id;
 
     /**
+     * @ORM\Column(type="string",options={"default":"blog"})
+     * @Assert\NotBlank()
+     */
+    private $type='blog';
+
+    /**
      * @ORM\Column(type="string")
      * @Assert\NotBlank()
      */
@@ -246,5 +252,13 @@ class Post
 
     public function setCategory( $category ) {
         $this->category = $category;
+    }
+
+    public function getType() {
+        return $this->type;
+    }
+
+    public function setType( $type ) {
+        $this->type = $type;
     }
 }
