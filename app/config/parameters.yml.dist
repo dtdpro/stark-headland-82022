@@ -34,3 +34,10 @@ parameters:
     # 'Remember Me' functionality, etc.)
     # see: http://symfony.com/doc/current/reference/configuration/framework.html#secret
     secret: 'secret_value_for_symfony_demo_application'
+
+    aws_key:
+    aws_secret:
+    aws_s3_region:
+    aws_s3_bucket:
+    aws_s3_dir:
+    aws_cf_url:

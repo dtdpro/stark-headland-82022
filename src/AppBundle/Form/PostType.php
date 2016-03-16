@@ -73,6 +73,7 @@ class PostType extends AbstractType
             ->add('publishedAt', 'AppBundle\Form\Type\DateTimePickerType', array(
                 'label' => 'label.published_at',
             ))
+            ->add('post_image_file','vich_image',array('label'=>"label.postimage",'download_link'=>false))
         ;
     }
 

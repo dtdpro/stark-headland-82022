@@ -8,6 +8,7 @@
     <ul class="breadcrumb">
         {{ _self.catTree(post.category) }}
     </ul>
+    <p><img src="{{ vich_uploader_asset(post, 'post_image_file') }}" class="img-responsive" /></p>
 
     {{ post.content|md2html }}
     <h6>Last Updated: {{ post.updatedAt|localizeddate('long', 'medium') }}</h6>

@@ -115,3 +115,33 @@ fos_user:
 knp_paginator:
     template:
         pagination: KnpPaginatorBundle:Pagination:twitter_bootstrap_v3_pagination.html.twig
+
+knp_gaufrette:
+    stream_wrapper: ~
+    adapters:
+        local_adapter:
+            local:
+                directory: %kernel.root_dir%/../web/images
+        uploads:
+            aws_s3:
+                service_id: 'dtd.aws_s3.client'
+                bucket_name: "%aws_s3_bucket%"
+                options:
+                    directory: "%aws_s3_dir%"
+    filesystems:
+        amazon_s3:
+            adapter: uploads
+        local_fs:
+            adapter: local_adapter
+
+vich_uploader:
+    db_driver: orm
+    storage: gaufrette
+    mappings:
+        post_image:
+            uri_prefix: "%aws_cf_url%/%aws_s3_dir%" # you'll need this set to use the Vich URL generator
+            upload_destination: amazon_s3
+            namer: vich_uploader.namer_uniqid
+            inject_on_load: true
+            delete_on_remove: true
+            delete_on_update: true

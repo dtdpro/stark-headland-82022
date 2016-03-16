@@ -246,6 +246,10 @@
                 <source>label.actions</source>
                 <target>Actions</target>
             </trans-unit>
+            <trans-unit id="label.postimage">
+                <source>label.postimage</source>
+                <target>Featured Image</target>
+            </trans-unit>
             <trans-unit id="title.post_new">
                 <source>title.post_new</source>
                 <target>Post creation</target>

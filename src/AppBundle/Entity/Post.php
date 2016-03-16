@@ -5,10 +5,13 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * @ORM\Entity(repositoryClass="AppBundle\Repository\PostRepository")
  * @ORM\Table(name="symfony_demo_post")
+ * @Vich\Uploadable
  *
  * Defines the properties of the Post entity to represent the blog posts.
  * See http://symfony.com/doc/current/book/doctrine.html#creating-an-entity-class
@@ -104,6 +107,26 @@ class Post
      * @ORM\JoinColumn(name="cat_id", referencedColumnName="id")
      */
     private $category;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $post_image;
+
+    /**
+     * @Assert\File(
+     *     maxSize="25M",
+     *     mimeTypes={"image/png", "image/jpeg", "image/pjpeg"}
+     * )
+     * @Vich\UploadableField(mapping="post_image", fileNameProperty="post_image")
+     *
+     * @var File $logo_virtual
+     *
+     * This is the virtual field that will populate logo with the resulting file.
+     */
+    protected $post_image_file;
 
 
 
@@ -260,5 +283,26 @@ class Post
 
     public function setType( $type ) {
         $this->type = $type;
+    }
+
+    public function getPostImage() {
+        return $this->post_image;
+    }
+
+    public function setPostImage( $post_image ) {
+        $this->post_image = $post_image;
+    }
+
+    public function getPostImageFile() {
+        return $this->post_image_file;
+    }
+
+    public function setPostImageFile( File $post_image_file = null ) {
+        $this->post_image_file = $post_image_file;
+        if ($post_image_file) {
+            $this->updatedAt = new \DateTime('now');
+        }
+
+        return $this;
     }
 }

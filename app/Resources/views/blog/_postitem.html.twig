@@ -4,12 +4,23 @@
             {{ post.title }}
         </a>
     </h2>
-    <p>{{ post.publishedAt|localizeddate('long', 'medium') }} by <strong>{{ post.user }}</strong></p>
-    <ul class="breadcrumb">
-        {{ _self.catTree(post.category) }}
-    </ul>
+    <div class="row">
+        {% if post.postImage %}
+            <div class="col-md-3 col-sm-4 col-xs-12">
+                <img src="{{ vich_uploader_asset(post, 'post_image_file') }}" class="img-responsive" />
+            </div>
+            <div class="col-md-9 col-sm-8 col-xs-12">
+        {% else %}
+            <div class="col-md-12">
+        {% endif %}
+            <p>{{ post.publishedAt|localizeddate('long', 'medium') }} by <strong>{{ post.user }}</strong></p>
+            <ul class="breadcrumb">
+                {{ _self.catTree(post.category) }}
+            </ul>
 
-    {{ post.summary|md2html }}
+            {{ post.summary|md2html }}
+        </div>
+    </div>
 </article>
 
 {% macro catTree(category) %}
