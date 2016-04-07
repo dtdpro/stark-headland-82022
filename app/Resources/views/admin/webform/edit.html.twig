@@ -1,0 +1,442 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block body_id 'admin_post_edit' %}
+
+{% block com_title %}Edit Web Form: {{ webform.title }}{% endblock %}
+
+{% block com_actions %}
+    <ul class="nav navbar-nav navbar-right">
+        <li><a href="{{ path('admin_webform_index') }}"><i class="fa fa-chevron-left"></i> Back to the Web Form list</a></li>
+    </ul>
+{% endblock %}
+
+{% block body %}
+
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="#post" aria-controls="post" role="tab" data-toggle="tab">Post</a></li>
+        <li role="presentation"><a href="#comments" aria-controls="comments" role="tab" data-toggle="tab">Questions</a></li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+
+        <!-- Post -->
+        <div role="tabpanel" class="tab-pane fade in active" id="post">
+            {{ form_start(edit_form, { attr: attr|default({}) }) }}
+            <div class="row" style="margin-top: 15px;">
+                <div id="main" class="col-sm-9">
+                    {{ include('default/_flash_messages.html.twig') }}
+                    {{ form_row(edit_form.title) }}
+                    {{ form_row(edit_form.category) }}
+                    {{ form_row(edit_form.summary) }}
+                    {{ form_row(edit_form.content_before_top) }}
+                    {{ form_row(edit_form.content_before_bottom) }}
+                    {{ form_row(edit_form.content_results_top) }}
+                    {{ form_row(edit_form.content_results_bottom) }}
+                </div>
+                <div id="sidebar" class="col-sm-3">
+                    {{ form_row(edit_form.saveAndClose) }}
+                    {{ form_row(edit_form.save) }}
+                    {{ form_row(edit_form.status) }}
+                    {{ form_row(edit_form.publishedAt) }}
+                    {{ form_row(edit_form.user) }}
+                    {{ form_row(edit_form.form_open) }}
+                    {{ form_row(edit_form.form_close) }}
+                    {{ form_row(edit_form.allow_unreg) }}
+                    {{ form_row(edit_form.allow_multiple) }}
+                </div>
+            </div>
+            {{ form_end(edit_form) }}
+        </div>
+
+        <!-- Comments -->
+        <div role="tabpanel" class="tab-pane fade" id="comments">
+            <div class="text-right" style="margin-top: 15px;">
+                <button id="questions-reload" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i> Refresh</button>
+                <button id="questions-add" class="btn btn-success btn-sm"><i class="fa fa-plus"></i> Add</button>
+            </div>
+            <form action="{{ path('admin_webform_questions_bulk') }}" method="post" id="adminQuestionsListForm" name="adminListForm">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th><input type="checkbox" id="checkAllQuestions"/></th>
+                        <th>ID</th>
+                        <th><i class="fa fa-question-circle"></i> Type</th>
+                        <th><i class="fa fa-question"></i> Question</th>
+                        <th class="text-center"><i class="fa fa-flag"></i> Required</th>
+                        <th class="text-center"><i class="fa fa-check"></i> Status</th>
+                        <th class="text-center"><i class="fa fa-cogs"></i> Actions</th></tr>
+                    </thead>
+                    <tbody id="questions-data">
+                    {{ include('admin/webform/questions.html.twig') }}
+                    </tbody>
+                </table>
+                <input type="hidden" value="" name="task" id="questionsTask">
+            </form>
+        </div>
+    </div>
+
+    <div class="modal fade" id="questionModal" tabindex="-1" role="dialog" aria-labelledby="questionModal-label">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="questionModal-label">Edit Question</h4>
+                </div>
+                <div class="modal-body" id="questionModal-body">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" id="questionModal-btnClose" data-dismiss="modal"><i class="fa fa-close"></i>Close</button>
+                    <button type="button" class="btn btn-primary" id="questionModal-btnSave"><i class="fa fa-save"></i> Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="optionListModal" tabindex="-1" role="dialog" aria-labelledby="optionListModal-label">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="optionListModal-label">Question Options</h4>
+                </div>
+                <div class="modal-body" id="optionListModal-body">
+                    <div class="text-right" style="margin-top: 15px;">
+                        <button id="options-reload" class="btn btn-default btn-sm" onclick="loadOptions();"><i class="fa fa-refresh"></i> Refresh</button>
+                        <button id="options-add" class="btn btn-success btn-sm" onclick="newOption();"><i class="fa fa-plus"></i> Add</button>
+                    </div>
+                    <form action="{{ path('admin_webform_question_options_bulk') }}" method="post" id="adminQuestionOptionsListForm" name="adminListForm">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th></th>
+                                <th><input type="checkbox" id="checkAllOptions"/></th>
+                                <th>ID</th>
+                                <th>Option</th>
+                                <th class="text-center">Status</th>
+                                <th class="text-center"><i class="fa fa-cogs"></i> Actions</th></tr>
+                            </thead>
+                            <tbody id="options-data">
+
+                            </tbody>
+                        </table>
+                        <input type="hidden" value="" name="task" id="optionsTask">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" id="optionListModal-btnClose" data-dismiss="modal"><i class="fa fa-close"></i>Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+
+        var useQuestion = 0;
+
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        })
+
+        $("#questions-data").sortable({
+            handle: ".handle"
+        });
+
+        $("#options-data").sortable({
+            handle: ".handle"
+        });
+
+        $("#checkAllQuestions").change(function () {
+            $(".adminQuestionRowCB").prop('checked', $(this).prop("checked"));
+        });
+
+        $("#checkAllOptions").change(function () {
+            $(".adminOptionRowCB").prop('checked', $(this).prop("checked"));
+        });
+
+        $('#myTabs a').click(function (e) {
+            e.preventDefault();
+            $(this).tab('show');
+        })
+
+        $('#questions-reload').click(function(e) {
+            e.preventDefault();
+            reloadQuestions();
+        });
+
+        $('#questions-add').click(function(e) {
+            e.preventDefault();
+            newQuestion();
+        });
+
+        $('#questionModal-btnSave').click(function(e) {
+            e.preventDefault();
+            $form = $("#questionModal-form");
+            $.ajax({
+                url: $form.attr('action'),
+                type: 'POST',
+                data: $form.serialize(),
+                success: function(data) {
+                    $("#questionModal-body").empty();
+                    $('#questionModal').modal('hide');
+                    reloadQuestions();
+                }
+            });
+        });
+
+        $( "#questions-data" ).on( "sortstop", function( event, ui ) {
+            $(".adminQuestionRowCB").prop('checked', true);
+            questionsTask("saveorder");
+        });
+
+        $( "#options-data" ).on( "sortstop", function( event, ui ) {
+            $(".adminOptionRowCB").prop('checked', true);
+            optionsTask("saveorder");
+        });
+
+        $('#questionModal').on('hidden.bs.modal',function(e) {
+            $("#questionModal-body").empty();
+            if (useQuestion != 0) {
+                getOptions(useQuestion);
+                useQuestion = 0;
+            }
+        });
+
+        function questionsTask(task) {
+            loadingDialog.show();
+            $('#questionsTask').val(task);
+            $form = $('#adminQuestionsListForm');
+            $.ajax({
+                url: $form.attr('action'),
+                type: 'POST',
+                data: $form.serialize(),
+                success: function(data) {
+                    reloadQuestions();
+                    loadingDialog.hide();
+                }
+            });
+        }
+
+        function optionsTask(task) {
+            loadingDialog.show();
+            $('#optionsTask').val(task);
+            $form = $('#adminQuestionOptionsListForm');
+            $.ajax({
+                url: $form.attr('action'),
+                type: 'POST',
+                data: $form.serialize(),
+                success: function(data) {
+                    loadOptions();
+                    loadingDialog.hide();
+                }
+            });
+        }
+
+        function reloadQuestions() {
+            loadingDialog.show();
+            var url = "{{ path('admin_questions_bywebform',{'id':webform.id}) }}";
+            jQuery.get(url, "",
+                function (data) {
+                    $("#questions-data").empty().append(data);
+                    loadingDialog.hide();
+                }
+            );
+            $('[data-toggle="tooltip"]').tooltip();
+            return false;
+        }
+        function unPublishQuestion(question) {
+            var url = "{{ path('admin_webform_question_unpublish',{'id':'0'}) }}";
+            url = url.replace("/0/", "/"+question+"/");
+            jQuery.get(url, "",
+                function (data) {
+                    if (data) reloadQuestions();
+                }
+            );
+            return false;
+        }
+
+        function publishQuestion(question) {
+            var url = "{{ path('admin_webform_question_publish',{'id':'0'}) }}";
+            url = url.replace("/0/", "/"+question+"/");
+            jQuery.get(url, "",
+                function (data) {
+                    if (data) reloadQuestions();
+                }
+            );
+            return false;
+        }
+
+        function trashQuestion(question) {
+            var url = "{{ path('admin_webform_question_trash',{'id':'0'}) }}";
+            url = url.replace("/0/", "/"+question+"/");
+            jQuery.get(url, "",
+                function (data) {
+                    if (data) reloadQuestions();
+                }
+            );
+            return false;
+        }
+
+        function moveUpQuestion(question) {
+            var url = "{{ path('admin_webform_question_up',{'id':'0'}) }}";
+            url = url.replace("/0/", "/"+question+"/");
+            jQuery.get(url, "",
+                function (data) {
+                    if (data) reloadQuestions();
+                }
+            );
+            return false;
+        }
+
+        function moveDownQuestion(question) {
+            var url = "{{ path('admin_webform_question_down',{'id':'0'}) }}";
+            url = url.replace("/0/", "/"+question+"/");
+            jQuery.get(url, "",
+                function (data) {
+                    if (data) reloadQuestions();
+                }
+            );
+            return false;
+        }
+
+        function newQuestion() {
+            $("#questionModal-label").empty().append('New Question');
+            var url = "{{ path('admin_webform_question_new',{'id':webform.id}) }}";
+            jQuery.get(url, "",
+                function (data) {
+                    $("#questionModal-body").empty().append(data);
+                    $('#questionModal').modal();
+                }
+            );
+            return false;
+        }
+
+        function loadQuestion(question) {
+            useQuestion = 0;
+            $("#questionModal-label").empty().append('Edit Question');
+            var url = "{{ path('admin_webform_question_load',{'id':'0'}) }}";
+            url = url.replace("/0/", "/"+question+"/");
+            jQuery.get(url, "",
+                function (data) {
+                    $("#questionModal-body").empty().append(data);
+                    $('#questionModal').modal();
+                }
+            );
+            return false;
+        }
+
+        function getOptions (question) {
+            useQuestion = question;
+            loadOptions();
+            $('#optionListModal').modal();
+        }
+
+        function loadOptions() {
+            $("#optionListModal-label").empty().append('Question Options');
+            var url = "{{ path('admin_question_options_byquestion',{'id':'0'}) }}";
+            url = url.replace("/0/", "/"+useQuestion+"/");
+            jQuery.get(url, "",
+                function (data) {
+                    $("#options-data").empty().append(data);
+                }
+            );
+            $('[data-toggle="tooltip"]').tooltip();
+            return false;
+        }
+
+
+        function unPublishOption(option,question) {
+            var url = "{{ path('admin_webform_question_option_unpublish',{'id':'0'}) }}";
+            url = url.replace("/0/", "/"+option+"/");
+            jQuery.get(url, "",
+                function (data) {
+                    if (data) loadOptions(question);
+                }
+            );
+            return false;
+        }
+
+        function publishOption(option,question) {
+            var url = "{{ path('admin_webform_question_option_publish',{'id':'0'}) }}";
+            url = url.replace("/0/", "/"+option+"/");
+            jQuery.get(url, "",
+                function (data) {
+                    if (data) loadOptions(question);
+                }
+            );
+            return false;
+        }
+
+        function trashOption(option,question) {
+            var url = "{{ path('admin_webform_question_option_trash',{'id':'0'}) }}";
+            url = url.replace("/0/", "/"+option+"/");
+            jQuery.get(url, "",
+                function (data) {
+                    if (data) loadOptions(question);
+                }
+            );
+            return false;
+        }
+
+        function moveUpOption(option,question) {
+            var url = "{{ path('admin_webform_question_option_up',{'id':'0'}) }}";
+            url = url.replace("/0/", "/"+option+"/");
+            jQuery.get(url, "",
+                function (data) {
+                    if (data) loadOptions(question);
+                }
+            );
+            return false;
+        }
+
+        function moveDownOption(option,question) {
+            var url = "{{ path('admin_webform_question_option_down',{'id':'0'}) }}";
+            url = url.replace("/0/", "/"+option+"/");
+            jQuery.get(url, "",
+                function (data) {
+                    if (data) loadOptions(question);
+                }
+            );
+            return false;
+        }
+
+        function newOption(question) {
+            useQuestion = question;
+            $('#optionListModal').modal('hide');
+            $("#questionModal-label").empty().append('New Option');
+            var url = "{{ path('admin_webform_question_option_new',{'id':'0'}) }}";
+            url = url.replace("/0/", "/"+question+"/");
+            jQuery.get(url, "",
+                function (data) {
+                    $("#questionModal-body").empty().append(data);
+                    $('#questionModal').modal();
+                }
+            );
+            return false;
+        }
+
+        function loadOption(option,question) {
+            useQuestion = question;
+            $('#optionListModal').modal('hide');
+            $("#questionModal-label").empty().append('Edit Option');
+            var url = "{{ path('admin_webform_question_option_load',{'id':'0'}) }}";
+            url = url.replace("/0/", "/"+option+"/");
+            jQuery.get(url, "",
+                function (data) {
+                    $("#questionModal-body").empty().append(data);
+                    $('#questionModal').modal();
+                }
+            );
+            return false;
+        }
+    </script>
+
+
+{% endblock %}
+
+{% block bot_right %}
+    {{ show_source_code(_self) }}
+{% endblock %}

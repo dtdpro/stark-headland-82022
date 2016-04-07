@@ -16,6 +16,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 
 /**
  * Defines the custom form field type used to manipulate datetime values across
@@ -50,7 +51,9 @@ class DateTimePickerType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-
+        $resolver->setDefaults(array(
+            'widget' => 'single_text',
+        ));
     }
 
     /**
@@ -58,6 +61,14 @@ class DateTimePickerType extends AbstractType
      */
     public function getParent()
     {
-        return 'Symfony\Component\Form\Extension\Core\Type\DateTimeType';
+        return DateTimeType::class;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getBlockPrefix()
+    {
+        return 'datetimepicker';
     }
 }

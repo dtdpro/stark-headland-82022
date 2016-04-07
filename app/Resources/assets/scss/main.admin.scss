@@ -5,7 +5,7 @@
 
 @import "bootstrap/variables";
 @import "bootstrap/mixins";
-@import "bootstrap/cosmo/variables";
+@import "bootstrap/dtdcosmo/variables";
 
 //
 // Typography
@@ -36,6 +36,10 @@ code {
 
 i {
     margin-right: .25em;
+}
+
+.handle {
+    cursor: move;
 }
 
 //
@@ -100,12 +104,13 @@ header {
 }
 // Footer
 footer {
-    background: $gray-lighter;
+    background: $navbar-default-bg;
     padding-top: 2em;
     padding-bottom: 2em;
+    color: $navbar-default-color;
 
     p {
-        color: $gray-dark;
+        color: $navbar-default-color;
         font-size: $font-size-small;
         margin-bottom: .25em;
     }
@@ -114,10 +119,26 @@ footer {
         text-align: right;
 
         i {
-            color: $gray-dark;
+            color: $navbar-default-color;
             font-size: 1.5 * $font-size-large;
             margin-left: .5em;
         }
+    }
+
+    a {
+        color: $navbar-default-link-color;
+    }
+
+    a:hover {
+        color: $navbar-default-link-hover-color;
+    }
+
+    a:active {
+        color: $navbar-default-link-active-color;
+    }
+
+    a:visited {
+        color: $navbar-default-link-color;
     }
 }
 
@@ -304,3 +325,4 @@ body#admin_post_index {
 // --------------------------------------------------
 body#admin_post_show {
 }
+

@@ -10,22 +10,29 @@
     </ul>
 {% endblock %}
 
-{% block main %}
+{% block body %}
 
-    {{ form_start(form) }}
-        {{ form_row(form.username) }}
-        {{ form_row(form.email) }}
-        {{ form_row(form.plainPassword) }}
-        {{ form_row(form.roles) }}
+    {{ form_start(form, { attr: attr|default({}) }) }}
+    <div class="row">
+        <div id="main" class="col-sm-9">
+            {{ include('default/_flash_messages.html.twig') }}
+            {{ form_row(form.first_name) }}
+            {{ form_row(form.last_name) }}
+            {{ form_row(form.username) }}
+            {{ form_row(form.email) }}
+            {{ form_row(form.plainPassword) }}
+            {{ form_row(form.roles) }}
+        </div>
 
-        <input type="submit" value="Create User" class="btn btn-primary" />
-
-        {{ form_widget(form.saveAndCreateNew, { label: 'Save and New', attr: { class: 'btn btn-primary' } }) }}
+        <div id="sidebar" class="col-sm-3">
+            {{ form_row(form.saveAndClose) }}
+            {{ form_row(form.saveAndCreateNew) }}
+            {{ form_row(form.enabled) }}
+        </div>
+    </div>
     {{ form_end(form) }}
-{% endblock %}
 
-{% block sidebar %}
-    {{ parent() }}
+
 {% endblock %}
 
 {% block bot_right %}

@@ -13,7 +13,8 @@
 <p>Welcome to the admin panel.</p>
     <div class="list-group">
         <a href="{{ path('admin_post_index') }}" class="list-group-item"><i class="fa fa-list-alt"></i> {{ 'menu.post_list'|trans }}</a>
-        <a href="{{ path('admin_category_index') }}" class="list-group-item"><i class="fa fa-tag"></i> Categories</a>
+        <a href="{{ path('admin_category_index',{'catroot':'blog'}) }}" class="list-group-item"><i class="fa fa-tag"></i> Categories: Blog</a>
+        <a href="{{ path('admin_category_index',{'catroot':'form'}) }}" class="list-group-item"><i class="fa fa-tag"></i> Categories: Form</a>
         <a href="{{ path('admin_user_index') }}" class="list-group-item"><i class="fa fa-user"></i> Users</a>
     </div>
 {% endblock %}

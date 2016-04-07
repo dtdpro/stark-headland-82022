@@ -58,7 +58,8 @@ class PostListType extends AbstractType
                 'class' => 'AppBundle:PostCategory',
                 'required' => false,
                 'query_builder' => function(NestedTreeRepository $er) {
-                   return $er->getNodesHierarchyQueryBuilder();
+                    $root = $er->findOneBy(array('slug'=>'blog'));
+                    return $er->getNodesHierarchyQueryBuilder($root);
                 },
             ))
             ->add('orderBy', ChoiceType::class,array(
@@ -88,7 +89,7 @@ class PostListType extends AbstractType
                 'label' => '# List Items',
                 'choices_as_values' => true,
             ))
-            ->add('submit', SubmitType::class, array('label' => 'Submit'))
+            ->add('submit', SubmitType::class, array('label' => 'Submit','attr'=>array('class'=>'btn btn-block btn-default')))
         ;
     }
 }

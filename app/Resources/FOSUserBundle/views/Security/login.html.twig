@@ -8,6 +8,9 @@
     <div class="row">
         <div class="col-sm-6">
             <div class="well">
+                {% if error %}
+                    <div class="alert alert-dismissible alert-danger" role="alert">{{ error|trans({}, 'FOSUserBundle') }}</div>
+                {% endif %}
                 <form action="{{ path('fos_user_security_check') }}" method="post">
                     <fieldset>
                         <legend><i class="fa fa-lock"></i> {{ 'title.login'|trans }}</legend>

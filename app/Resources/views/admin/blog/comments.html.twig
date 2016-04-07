@@ -1,0 +1,17 @@
+{% for comment in post.comments if post.comments and comment.status >= 0%}
+    <tr>
+        <td class="text-center">{{ comment.id }}</td>
+        <td class="col-sm-1">{{ comment.publishedAt|localizeddate('medium', 'short') }}</td>
+        <td class="col-sm-1">{{ comment.user }}</td>
+        <td class="col-sm-8">{{ comment.content|md2html }}</td>
+        <td class="text-center"><div data-toggle="tooltip" title="{{ comment.statusText }}">{{ comment.statusIcon|raw }}</div></td>
+        <td class="text-center">
+            <a href="#" onclick="return loadComment({{ comment.id }});" data-toggle="tooltip" title="Edit"><i class="fa fa-edit"></i></a>
+            {% if comment.status == 1 %}<a href="#" onclick="return unPublishComment({{ comment.id }});" data-toggle="tooltip" title="Unpublish"><i class="fa fa-close"></i></a>{% endif %}
+            {% if comment.status == 0 %}<a href="#" onclick="return publishComment({{ comment.id }});" data-toggle="tooltip" title="Publish"><i class="fa fa-check"></i></a>{% endif %}
+            {% if comment.status != -1 %}<a href="#" onclick="return trashComment({{ comment.id }});" data-toggle="tooltip" title="Trash"><i class="fa fa-trash"></i></a>{% endif %}
+        </td>
+    </tr>
+{% else %}
+    <tr><td colspan="6">No comments have been made as of yet.</td></tr>
+{% endfor %}

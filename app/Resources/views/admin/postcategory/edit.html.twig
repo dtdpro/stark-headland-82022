@@ -6,31 +6,26 @@
 
 {% block com_actions %}
     <ul class="nav navbar-nav navbar-right">
-        <li><a href="{{ path('admin_category_index') }}"><i class="fa fa-chevron-left"></i> Back to category list</a></li>
+        <li><a href="{{ path('admin_category_index',{'catroot':catroot}) }}"><i class="fa fa-chevron-left"></i> Back to category list</a></li>
     </ul>
 {% endblock %}
 
-{% block main %}
-    {{ include('default/_flash_messages.html.twig') }}
+{% block body %}
+    {{ form_start(edit_form, { attr: attr|default({}) }) }}
+    <div class="row">
+        <div id="main" class="col-sm-9">
+            {{ include('default/_flash_messages.html.twig') }}
+            {{ form_row(edit_form.name) }}
+            {{ form_row(edit_form.parent) }}
+            {{ form_row(edit_form.createdAt) }}
+        </div>
 
-    {{ include('admin/postcategory/_form.html.twig', {
-        form: edit_form,
-        button_label: 'action.save'|trans,
-        include_back_to_home_link: true,
-    }, with_context = false) }}
-{% endblock %}
-
-{% block sidebar %}
-    <div class="section actions">
-        {{ include('admin/postcategory/_form.html.twig', {
-            form: delete_form,
-            button_label: 'Delete category',
-            button_css: 'btn btn-lg btn-block btn-danger',
-            show_confirmation: true,
-        }, with_context = false) }}
+        <div id="sidebar" class="col-sm-3">
+            {{ form_row(edit_form.saveAndClose) }}
+            {{ form_row(edit_form.save) }}
+        </div>
     </div>
-
-    {{ parent() }}
+    {{ form_end(edit_form) }}
 {% endblock %}
 
 {% block bot_right %}

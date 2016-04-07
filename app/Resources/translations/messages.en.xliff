@@ -129,9 +129,9 @@
                 <source>action.save</source>
                 <target>Save changes</target>
             </trans-unit>
-            <trans-unit id="action.delete_post">
-                <source>action.delete_post</source>
-                <target>Delete post</target>
+            <trans-unit id="action.delete">
+                <source>action.delete</source>
+                <target>Trash</target>
             </trans-unit>
             <trans-unit id="delete_post_modal.title">
                 <source>delete_post_modal.title</source>
@@ -318,7 +318,7 @@
             </trans-unit>
             <trans-unit id="post.deleted_successfully">
                 <source>post.deleted_successfully</source>
-                <target>Post deleted successfully!</target>
+                <target>Post trashed successfully!</target>
             </trans-unit>
 
             <trans-unit id="help.app_description">

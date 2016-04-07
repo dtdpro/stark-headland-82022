@@ -10,27 +10,32 @@
     </ul>
 {% endblock %}
 
-{% block main %}
-
-    {{ form_start(form) }}
-    {{ form_row(form.title) }}
-    {{ form_row(form.category) }}
-    {{ form_row(form.status) }}
-    {{ form_row(form.summary) }}
-    {{ form_row(form.content) }}
-    {{ form_row(form.user) }}
-    {{ form_row(form.publishedAt) }}
-
-    <input type="submit" value="{{ 'label.create_post'|trans }}" class="btn btn-primary" />
-
-    {{ form_widget(form.saveAndCreateNew, { label: 'label.save_and_create_new', attr: { class: 'btn btn-primary' } }) }}
 
 
+{% block body %}
+
+    {{ form_start(form, { attr: attr|default({}) }) }}
+    <div class="row">
+        <div id="main" class="col-sm-9">
+            {{ include('default/_flash_messages.html.twig') }}
+            {{ form_row(form.title) }}
+            {{ form_row(form.category) }}
+            {{ form_row(form.summary) }}
+            {{ form_row(form.content) }}
+        </div>
+
+        <div id="sidebar" class="col-sm-3">
+            {{ form_row(form.saveAndClose) }}
+            {{ form_row(form.saveAndCreateNew) }}
+            {{ form_row(form.status) }}
+            {{ form_row(form.publishedAt) }}
+            {{ form_row(form.user) }}
+            {{ form_row(form.allow_comments) }}
+        </div>
+    </div>
     {{ form_end(form) }}
-{% endblock %}
 
-{% block sidebar %}
-    {{ parent() }}
+
 {% endblock %}
 
 {% block bot_right %}

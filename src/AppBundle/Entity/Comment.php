@@ -66,6 +66,12 @@ class Comment
      */
     private $publishedAt;
 
+    /**
+     * @ORM\Column(type="smallint",nullable=true)
+     * @Assert\NotBlank()
+     */
+    private $status=1;
+
     public function __construct()
     {
         $this->publishedAt = new \DateTime();
@@ -122,6 +128,7 @@ class Comment
     {
         return $this->publishedAt;
     }
+
     public function setPublishedAt(\DateTime $publishedAt)
     {
         $this->publishedAt = $publishedAt;
@@ -134,5 +141,31 @@ class Comment
     public function setPost(Post $post)
     {
         $this->post = $post;
+    }
+
+    public function getStatus() {
+        return $this->status;
+    }
+
+    public function getStatusText() {
+        switch ($this->status) {
+            case -1: $status = 'Trashed'; break;
+            case  0: $status = 'Unpublished'; break;
+            case  1: $status = 'Published'; break;
+        }
+        return $status;
+    }
+
+    public function getStatusIcon() {
+        switch ($this->status) {
+            case -1: $status = '<i class="fa fa-trash"></i>'; break;
+            case  0: $status = '<i class="fa fa-close"></i>'; break;
+            case  1: $status = '<i class="fa fa-check"></i>'; break;
+        }
+        return $status;
+    }
+
+    public function setStatus( $status ) {
+        $this->status = $status;
     }
 }

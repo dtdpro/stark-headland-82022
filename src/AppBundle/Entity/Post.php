@@ -87,7 +87,7 @@ class Post
     private $updatedAt;
 
     /**
-     * @ORM\Column(type="smallint",nullable=true)
+     * @ORM\Column(type="smallint",options={"default":"1"})
      * @Assert\NotBlank()
      */
     private $status=1;
@@ -127,6 +127,11 @@ class Post
      * This is the virtual field that will populate logo with the resulting file.
      */
     protected $post_image_file;
+
+    /**
+     * @ORM\Column(type="text",nullable=true)
+     */
+    private $params;
 
 
 
@@ -304,5 +309,17 @@ class Post
         }
 
         return $this;
+    }
+
+    public function getParams() {
+        return $this->params;
+    }
+
+    public function setParams( $params ) {
+        $this->params = $params;
+    }
+
+    public function getParamsArray() {
+        return json_decode($this->params,true);
     }
 }

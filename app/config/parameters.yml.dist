@@ -41,3 +41,4 @@ parameters:
     aws_s3_bucket:
     aws_s3_dir:
     aws_cf_url:
+    ga_id:

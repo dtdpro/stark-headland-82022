@@ -14,6 +14,7 @@ namespace AppBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use AppBundle\Form\Type\CheckSwitchType;
 
 /**
  * Defines the form used to create and manipulate users.
@@ -54,7 +55,7 @@ class UserType extends AbstractType
             ->add('email', null, array('label' => 'Email'))
             ->add('plainPassword', 'repeated', array('type' => 'password','required'=>false,'first_options' => array('label' => 'Password'),'second_options' => array('label' => 'Confirm Password'),'invalid_message' => 'Passwords do not match',))
             ->add('roles', 'choice', array('choices'=>array('ROLE_USER'=>'Registered User','ROLE_EDITOR'=>'Editor','ROLE_ADMIN'=>'Administrator','ROLE_SUPER_ADMIN'=>'Super Administrator'), 'expanded'=>true, 'multiple'=>true, 'label' => 'Roles'))
-            ->add('enabled', null);
+            ->add('enabled', CheckSwitchType::class);
     }
 
     /**

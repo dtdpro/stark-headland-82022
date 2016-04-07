@@ -13,10 +13,25 @@
             <i class="fa fa-list-alt"></i> {{ 'menu.post_list'|trans }}
         </a>
     </li>
-    <li class="{% if 'category' in app.request.attributes.get('_route') %} active{% endif %}">
-        <a href="{{ path('admin_category_index') }}">
-            <i class="fa fa-tag"></i> Categories
+    <li class="{% if 'webform' in app.request.attributes.get('_route') %} active{% endif %}">
+        <a href="{{ path('admin_webform_index') }}">
+            <i class="fa fa-list-alt"></i> Web Forms
         </a>
+    </li>
+    <li class="dropdown{% if 'category' in app.request.attributes.get('_route') %} active{% endif %}">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-tag"></i> Categories <span class="caret"></span></a>
+        <ul class="dropdown-menu">
+            <li>
+                <a href="{{ path('admin_category_index',{'catroot':'blog'}) }}">
+                    <i class="fa fa-tag"></i> Blog
+                </a>
+            </li>
+            <li>
+                <a href="{{ path('admin_category_index',{'catroot':'form'}) }}">
+                    <i class="fa fa-tag"></i> Form
+                </a>
+            </li>
+        </ul>
     </li>
     <li class="{% if 'user' in app.request.attributes.get('_route') %} active{% endif %}">
         <a href="{{ path('admin_user_index') }}">

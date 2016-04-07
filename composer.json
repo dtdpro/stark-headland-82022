@@ -33,7 +33,9 @@
         "knplabs/knp-gaufrette-bundle"         : "~0.3",
         "knplabs/gaufrette"                    :"~0.2",
         "vich/uploader-bundle"                 : "^0.14.0",
-        "aws/aws-sdk-php"                      :"~2.8"
+        "aws/aws-sdk-php"                      :"~2.8",
+        "kevintweber/ktw-database-menu-bundle": "^0.5.0",
+        "knplabs/knp-menu-bundle": "^2.0"
     },
     "require-dev": {
         "sensio/generator-bundle": "~3.0"
@@ -73,7 +75,8 @@
                 "aws_s3_region":"AWS_S3_REGION",
                 "aws_s3_bucket":"AWS_S3_BUCKET",
                 "aws_s3_dir":"AWS_S3_DIR",
-                "aws_cf_url":"AWS_CF_URL"
+                "aws_cf_url":"AWS_CF_URL",
+                "ga_id":"GA_ID"
             }
         }
     }

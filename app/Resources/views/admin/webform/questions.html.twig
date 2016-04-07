@@ -1,0 +1,22 @@
+{% for question in webform.questions if webform.questions and question.status >= 0%}
+    <tr>
+        <td><i class="fa fa-bars handle"></i></td>
+        <td><input name="qid[]" value="{{ question.id }}" type="checkbox" class="adminQuestionRowCB"></td>
+        <td class="text-center">{{ question.id }}</td>
+        <td class="col-sm-1">{{ question.typeText }}</td>
+        <td class="col-sm-8">{{ question.content }}</td>
+        <td class="text-center">{% if question.isRequired %}<i class="fa fa-check"></i>{% else %}<i class="fa fa-close"></i>{% endif %}</td>
+        <td class="text-center"><div data-toggle="tooltip" title="{{ question.statusText }}">{{ question.statusIcon|raw }}</div></td>
+        <td class="text-center">
+            {% if question.position < (webform.questions|length - 1) %}<a href="#" onclick="return moveDownQuestion({{ question.id }});" data-toggle="tooltip" title="Move Down"><i class="fa fa-chevron-down"></i></a>{% else %}<i class="fa fa-chevron-down"></i>{% endif %}
+            {% if question.position >= 1 %}<a href="#" onclick="return moveUpQuestion({{ question.id }});" data-toggle="tooltip" title="Move Up"><i class="fa fa-chevron-up"></i></a>{% else %}<i class="fa fa-chevron-up"></i>{% endif %}
+            {% if question.hasOptions %}<a href="#" onclick="return getOptions({{ question.id }});" data-toggle="tooltip" title="Options"><i class="fa fa-list-ul"></i></a>{% else %}<i class="fa fa-list-ul"></i>{% endif %}
+            <a href="#" onclick="return loadQuestion({{ question.id }});" data-toggle="tooltip" title="Edit"><i class="fa fa-edit"></i></a>
+            {% if question.status == 1 %}<a href="#" onclick="return unPublishQuestion({{ question.id }});" data-toggle="tooltip" title="Unpublish"><i class="fa fa-close"></i></a>{% endif %}
+            {% if question.status == 0 %}<a href="#" onclick="return publishQuestion({{ question.id }});" data-toggle="tooltip" title="Publish"><i class="fa fa-check"></i></a>{% endif %}
+            {% if question.status != -1 %}<a href="#" onclick="return trashQuestion({{ question.id }});" data-toggle="tooltip" title="Trash"><i class="fa fa-trash"></i></a>{% endif %}
+        </td>
+    </tr>
+{% else %}
+    <tr><td colspan="6">No questions have been added as of yet.</td></tr>
+{% endfor %}

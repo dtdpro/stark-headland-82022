@@ -15,7 +15,10 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
+use Vich\UploaderBundle\Form\Type\VichImageType;
+use AppBundle\Form\Type\DateTimePickerType;
 
 
 /**
@@ -49,7 +52,8 @@ class PostType extends AbstractType
             ->add('category', null, array(
                 'label' => 'label.category',
                 'query_builder' => function(NestedTreeRepository $er) {
-                    return $er->getNodesHierarchyQueryBuilder();
+                    $root = $er->findOneBy(array('slug'=>'blog'));
+                    return $er->getNodesHierarchyQueryBuilder($root);
                 },
                 'required' => true,
             ))
@@ -64,16 +68,16 @@ class PostType extends AbstractType
                 'label' => 'label.status',
                 'choices_as_values' => true,
             ))
-            ->add('summary', 'Symfony\Component\Form\Extension\Core\Type\TextareaType', array('label' => 'label.summary'))
+            ->add('summary', TextareaType::class, array('label' => 'label.summary'))
             ->add('content', null, array(
                 'attr' => array('rows' => 20),
                 'label' => 'label.content',
             ))
             ->add('user', null, array('label' => 'label.author'))
-            ->add('publishedAt', 'AppBundle\Form\Type\DateTimePickerType', array(
+            ->add('publishedAt', DateTimePickerType::class, array(
                 'label' => 'label.published_at',
             ))
-            ->add('post_image_file','vich_image',array('label'=>"label.postimage",'download_link'=>false))
+            ->add('post_image_file', VichImageType::class, array('label'=>"label.postimage",'download_link'=>false,'required'=>false))
         ;
     }
 

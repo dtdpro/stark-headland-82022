@@ -54,6 +54,8 @@ framework:
 twig:
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
+    globals:
+        ga_id: "%ga_id%"
     form_themes:
         - "bootstrap_3_layout.html.twig"
         - ':form:fields.html.twig'
@@ -91,6 +93,11 @@ doctrine:
                 alias: Gedmo
                 prefix: Gedmo\Tree\Entity
                 dir: "%kernel.root_dir%/../vendor/gedmo/doctrine-extensions/lib/Gedmo/Tree/Entity"
+            sortable:
+                type: annotation
+                alias: Gedmo
+                prefix: Gedmo\Sortable\Entity
+                dir: "%kernel.root_dir%/../vendor/gedmo/doctrine-extensions/lib/Gedmo/Sortable/Entity"
 
 # Swiftmailer Configuration (used to send emails)
 swiftmailer:
@@ -145,3 +152,6 @@ vich_uploader:
             inject_on_load: true
             delete_on_remove: true
             delete_on_update: true
+
+ktw_database_menu:
+    menu_item_entity: kevintweber\KtwDatabaseMenuBundle\Entity\MenuItem

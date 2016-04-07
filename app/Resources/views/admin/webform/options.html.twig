@@ -1,0 +1,20 @@
+
+        {% for option in question.options if question.options and option.status >= 0 %}
+            <tr>
+                <td><i class="fa fa-bars handle"></i></td>
+                <td><input name="oid[]" value="{{ option.id }}" type="checkbox" class="adminOptionRowCB"></td>
+                <td class="text-center">{{ option.id }}</td>
+                <td class="col-sm-8">{{ option.content }}</td>
+                <td class="text-center"><div data-toggle="tooltip" title="{{ option.statusText }}">{{ option.statusIcon|raw }}</div></td>
+                <td class="text-center">
+                    {% if option.position < (question.options|length - 1) %}<a href="#" onclick="return moveDownOption({{ option.id }},{{ question.id }});" data-toggle="tooltip" title="Move Down"><i class="fa fa-chevron-down"></i></a>{% else %}<i class="fa fa-chevron-down"></i>{% endif %}
+                    {% if option.position >= 1 %}<a href="#" onclick="return moveUpOption({{ option.id }},{{ question.id }});" data-toggle="tooltip" title="Move Up"><i class="fa fa-chevron-up"></i></a>{% else %}<i class="fa fa-chevron-up"></i>{% endif %}
+                    <a href="#" onclick="return loadOption({{ option.id }},{{ question.id }});" data-toggle="tooltip" title="Edit"><i class="fa fa-edit"></i></a>
+                    {% if option.status == 1 %}<a href="#" onclick="return unPublishOption({{ option.id }},{{ question.id }});" data-toggle="tooltip" title="Unpublish"><i class="fa fa-close"></i></a>{% endif %}
+                    {% if option.status == 0 %}<a href="#" onclick="return publishOption({{ option.id }},{{ question.id }});" data-toggle="tooltip" title="Publish"><i class="fa fa-check"></i></a>{% endif %}
+                    {% if option.status != -1 %}<a href="#" onclick="return trashOption({{ option.id }},{{ question.id }});" data-toggle="tooltip" title="Trash"><i class="fa fa-trash"></i></a>{% endif %}
+                </td>
+            </tr>
+        {% else %}
+            <tr><td colspan="6">No options available.</td></tr>
+        {% endfor %}

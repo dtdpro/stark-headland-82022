@@ -38,10 +38,11 @@ class PostCategoryType extends AbstractType
             ))
             ->add('parent', null, array(
                 'label' => 'Parent Category',
-                'query_builder' => function(NestedTreeRepository $er) {
-                    return $er->getNodesHierarchyQueryBuilder();
+                'query_builder' => function(NestedTreeRepository $er) use ($options) {
+                    $root = $er->findOneBy(array('slug'=>$options['catroot']));
+                    return $er->getNodesHierarchyQueryBuilder($root,false,array(),true);
                 },
-                'required' => false,
+                'required' => true,
             ))
             ->add('createdAt', 'AppBundle\Form\Type\DateTimePickerType', array(
                 'label' => 'label.published_at',
@@ -56,6 +57,7 @@ class PostCategoryType extends AbstractType
     {
         $resolver->setDefaults(array(
             'data_class' => 'AppBundle\Entity\PostCategory',
+            'catroot' => null
         ));
     }
 }

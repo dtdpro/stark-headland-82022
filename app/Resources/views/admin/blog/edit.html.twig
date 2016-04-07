@@ -10,27 +10,192 @@
     </ul>
 {% endblock %}
 
-{% block main %}
-    {{ include('default/_flash_messages.html.twig') }}
+{% block body %}
 
-    {{ include('admin/blog/_form.html.twig', {
-        form: edit_form,
-        button_label: 'action.save'|trans,
-        include_back_to_home_link: true,
-    }, with_context = false) }}
-{% endblock %}
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="#post" aria-controls="post" role="tab" data-toggle="tab">Post</a></li>
+        <li role="presentation"><a href="#comments" aria-controls="comments" role="tab" data-toggle="tab">Comments</a></li>
+    </ul>
 
-{% block sidebar %}
-    <div class="section actions">
-        {{ include('admin/blog/_form.html.twig', {
-            form: delete_form,
-            button_label: 'action.delete_post'|trans,
-            button_css: 'btn btn-lg btn-block btn-danger',
-            show_confirmation: true,
-        }, with_context = false) }}
+    <!-- Tab panes -->
+    <div class="tab-content">
+
+        <!-- Post -->
+        <div role="tabpanel" class="tab-pane fade in active" id="post">
+            {{ form_start(edit_form, { attr: attr|default({}) }) }}
+            <div class="row" style="margin-top: 15px;">
+                <div id="main" class="col-sm-9">
+                    {{ include('default/_flash_messages.html.twig') }}
+                    {{ form_row(edit_form.title) }}
+                    {{ form_row(edit_form.category) }}
+                    {{ form_row(edit_form.summary) }}
+                    {{ form_row(edit_form.content) }}
+                    {{ form_row(edit_form.post_image_file) }}
+                </div>
+                <div id="sidebar" class="col-sm-3">
+                    {{ form_row(edit_form.saveAndClose) }}
+                    {{ form_row(edit_form.save) }}
+                    {{ form_row(edit_form.status) }}
+                    {{ form_row(edit_form.publishedAt) }}
+                    {{ form_row(edit_form.user) }}
+                    {{ form_row(edit_form.allow_comments) }}
+                </div>
+            </div>
+            {{ form_end(edit_form) }}
+        </div>
+
+        <!-- Comments -->
+        <div role="tabpanel" class="tab-pane fade" id="comments">
+            <div class="text-right" style="margin-top: 15px;">
+                <button id="comments-reload" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i> Refresh</button>
+                <button id="comments-add" class="btn btn-success btn-sm"><i class="fa fa-plus"></i> Add</button>
+            </div>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th><i class="fa fa-calendar"></i> Date</th>
+                    <th><i class="fa fa-user"></i> User</th>
+                    <th><i class="fa fa-comments"></i> Comment</th>
+                    <th class="text-center"><i class="fa fa-check"></i> Status</th>
+                    <th class="text-center"><i class="fa fa-cogs"></i> Actions</th></tr>
+                </thead>
+                <tbody id="comments-data">
+                {{ include('admin/blog/comments.html.twig') }}
+                </tbody>
+            </table>
+        </div>
     </div>
 
-    {{ parent() }}
+
+    <div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModal-label">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="commentModal-label">Edit Comment</h4>
+                </div>
+                <div class="modal-body" id="commentModal-body">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" id="commentModal-btnClose" data-dismiss="modal"><i class="fa fa-close"></i>Close</button>
+                    <button type="button" class="btn btn-primary" id="commentModal-btnSave"><i class="fa fa-save"></i> Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        })
+        $('#myTabs a').click(function (e) {
+            e.preventDefault();
+            $(this).tab('show');
+        })
+
+        $('#comments-reload').click(function(e) {
+            e.preventDefault();
+            reloadComments();
+        });
+
+        $('#comments-add').click(function(e) {
+            e.preventDefault();
+            newComment();
+        });
+
+        $('#commentModal-btnSave').click(function(e) {
+            e.preventDefault();
+            $form = $("#commentModal-form");
+            $.ajax({
+                url: $form.attr('action'),
+                type: 'POST',
+                data: $form.serialize(),
+                success: function(data) {
+                    $("#commentModal-body").empty();
+                    $('#commentModal').modal('hide');
+                    reloadComments();
+                }
+            });
+        });
+
+        $('#commentModal').on('hidden.bs.modal',function(e) {
+            $("#commentModal-body").empty();
+        });
+
+        function reloadComments() {
+            var url = "{{ path('admin_comments_bypost',{'id':post.id}) }}";
+            jQuery.get(url, "",
+                    function (data) {
+                        $("#comments-data").empty().append(data);
+                    }
+            );
+            $('[data-toggle="tooltip"]').tooltip();
+            return false;
+        }
+
+        function unPublishComment(comment) {
+            var url = "{{ path('admin_comment_unpublish',{'id':'0'}) }}";
+            url = url.replace("/0/", "/"+comment+"/");
+            jQuery.get(url, "",
+                    function (data) {
+                        if (data) reloadComments();
+                    }
+            );
+            return false;
+        }
+
+        function publishComment(comment) {
+            var url = "{{ path('admin_comment_publish',{'id':'0'}) }}";
+            url = url.replace("/0/", "/"+comment+"/");
+            jQuery.get(url, "",
+                    function (data) {
+                        if (data) reloadComments();
+                    }
+            );
+            return false;
+        }
+
+        function trashComment(comment) {
+            var url = "{{ path('admin_comment_trash',{'id':'0'}) }}";
+            url = url.replace("/0/", "/"+comment+"/");
+            jQuery.get(url, "",
+                    function (data) {
+                        if (data) reloadComments();
+                    }
+            );
+            return false;
+        }
+
+        function newComment() {
+            $("#commentModal-label").empty().append('New Comment');
+            var url = "{{ path('admin_comment_post_new',{'id':post.id}) }}";
+            jQuery.get(url, "",
+                    function (data) {
+                        $("#commentModal-body").empty().append(data);
+                        $('#commentModal').modal();
+                    }
+            );
+            return false;
+        }
+
+        function loadComment(comment) {
+            $("#commentModal-label").empty().append('Edit Comment');
+            var url = "{{ path('admin_comment_load',{'id':'0'}) }}";
+            url = url.replace("/0/", "/"+comment+"/");
+            jQuery.get(url, "",
+                    function (data) {
+                        $("#commentModal-body").empty().append(data);
+                        $('#commentModal').modal();
+                    }
+            );
+            return false;
+        }
+    </script>
+
+
 {% endblock %}
 
 {% block bot_right %}

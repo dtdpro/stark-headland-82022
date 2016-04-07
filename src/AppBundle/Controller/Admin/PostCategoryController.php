@@ -32,11 +32,11 @@ class PostCategoryController extends AdminController
     /**
      * Lists all categories.
      *
-     * @Route("/", name="admin_category_index", defaults={"page" = 1})
-     * @Route("/page/{page}", name="admin_category_index_paginated", requirements={"page" : "\d+"})
+     * @Route("/{catroot}", name="admin_category_index", defaults={"page" = 1})
+     * @Route("/{catroot}/page/{page}", name="admin_category_index_paginated", requirements={"page" : "\d+"})
      * @Method({"GET", "POST"})
      */
-    public function indexAction($page, Request $request)
+    public function indexAction($catroot, $page, Request $request)
     {
         // Filters
         if (!$filterlist = $this->get('session')->get('admin.catlist')) {
@@ -50,8 +50,9 @@ class PostCategoryController extends AdminController
         $entityManager = $this->getDoctrine()->getManager();
         $catrepo = $entityManager->getRepository('AppBundle:PostCategory');
 
-        $queryBuilder = $catrepo->createQueryBuilder('node')
-            ->orderBy('node.root,node.lft', 'ASC');
+        $root = $catrepo->findOneBy(array('slug'=>$catroot));
+
+        $queryBuilder = $catrepo->getNodesHierarchyQueryBuilder($root);
 
         if ($filterlist->getSearchName()) {
             $queryBuilder->andWhere('node.name like :title')->setParameter('title', '%'.$filterlist->getSearchName().'%');
@@ -63,31 +64,32 @@ class PostCategoryController extends AdminController
         $cats = $paginator->paginate($query, $page, $filterlist->getNumListItems());
         $cats->setUsedRoute('admin_category_index_paginated');
 
-        return $this->render('admin/postcategory/index.html.twig', array('cats' => $cats,'filterform'=>$filterform->createView()));
+        return $this->render('admin/postcategory/index.html.twig', array('catroot'=> $catroot,'cats' => $cats,'filterform'=>$filterform->createView()));
     }
 
     /**
      * Creates a new Category entity.
      *
-     * @Route("/new", name="admin_category_new")
+     * @Route("/{catroot}/new", name="admin_category_new")
      * @Method({"GET", "POST"})
      *
      * NOTE: the Method annotation is optional, but it's a recommended practice
      * to constraint the HTTP methods each controller responds to (by default
      * it responds to all methods).
      */
-    public function newAction(Request $request)
+    public function newAction($catroot,Request $request)
     {
         if (null === $this->getUser() || !$this->hasRole('ROLE_ADMIN')) {
             $this->addFlash('error', 'Categories can only be shown to admins.');
-            return $this->redirectToRoute('admin_category_index');
+            return $this->redirectToRoute('admin_category_index', array('catroot'=> $catroot));
         }
 
         $cat = new PostCategory();
 
         // See http://symfony.com/doc/current/book/forms.html#submitting-forms-with-multiple-buttons
-        $form = $this->createForm('AppBundle\Form\PostCategoryType', $cat)
-            ->add('saveAndCreateNew', 'Symfony\Component\Form\Extension\Core\Type\SubmitType');
+        $form = $this->createForm('AppBundle\Form\PostCategoryType', $cat, array('catroot'=>$catroot))
+                     ->add('saveAndClose', 'Symfony\Component\Form\Extension\Core\Type\SubmitType',array('attr'=>array('class'=>'btn btn-primary btn-block')))
+                     ->add('saveAndCreateNew', 'Symfony\Component\Form\Extension\Core\Type\SubmitType',array('attr'=>array('class'=>'btn btn-default btn-block')));
 
         $form->handleRequest($request);
 
@@ -107,14 +109,15 @@ class PostCategoryController extends AdminController
             $catrepo->reorder($cat,'name','ASC');
 
             if ($form->get('saveAndCreateNew')->isClicked()) {
-                return $this->redirectToRoute('admin_category_new');
+                return $this->redirectToRoute('admin_category_new', array('catroot'=> $catroot));
             }
 
-            return $this->redirectToRoute('admin_category_index');
+            return $this->redirectToRoute('admin_category_index', array('catroot'=> $catroot));
         }
 
         return $this->render('admin/postcategory/new.html.twig', array(
             'cat' => $cat,
+            'catroot' => $catroot,
             'form' => $form->createView(),
         ));
     }
@@ -122,40 +125,39 @@ class PostCategoryController extends AdminController
     /**
      * Finds and displays a Post entity.
      *
-     * @Route("/{id}", requirements={"id" = "\d+"}, name="admin_category_show")
+     * @Route("/{catroot}/{id}", requirements={"id" = "\d+"}, name="admin_category_show")
      * @Method("GET")
      */
-    public function showAction(PostCategory $cat)
+    public function showAction($catroot,PostCategory $cat)
     {
         if (null === $this->getUser() || !$this->hasRole('ROLE_ADMIN')) {
             $this->addFlash('error', 'Categories can only be shown to admins.');
-            return $this->redirectToRoute('admin_category_index');
+            return $this->redirectToRoute('admin_category_index', array('catroot'=> $catroot));
         }
-
-        $deleteForm = $this->createDeleteForm($post);
 
         return $this->render('admin/postcategory/show.html.twig', array(
             'cat'        => $cat,
-            'delete_form' => $deleteForm->createView(),
+            'catroot'        => $catroot,
         ));
     }
 
     /**
      * Displays a form to edit an existing Post entity.
      *
-     * @Route("/{id}/edit", requirements={"id" = "\d+"}, name="admin_category_edit")
+     * @Route("/{catroot}/{id}/edit", requirements={"id" = "\d+"}, name="admin_category_edit")
      * @Method({"GET", "POST"})
      */
-    public function editAction(PostCategory $cat, Request $request)
+    public function editAction($catroot, PostCategory $cat, Request $request)
     {
         if (null === $this->getUser() || !$this->hasRole('ROLE_ADMIN')) {
             $this->addFlash('error', 'Categories can only be edited by administrators.');
-            return $this->redirectToRoute('admin_category_index');
+            return $this->redirectToRoute('admin_category_index', array('catroot'=> $catroot));
         }
         $entityManager = $this->getDoctrine()->getManager();
 
-        $editForm = $this->createForm('AppBundle\Form\PostCategoryType', $cat);
-        $deleteForm = $this->createDeleteForm($cat);
+        $editForm = $this->createForm('AppBundle\Form\PostCategoryType', $cat, array('catroot'=>$catroot))
+                         ->add('saveAndClose', 'Symfony\Component\Form\Extension\Core\Type\SubmitType',array('attr'=>array('class'=>'btn btn-primary btn-block')))
+                         ->add('save', 'Symfony\Component\Form\Extension\Core\Type\SubmitType',array('label'=>'action.save','attr'=>array('class'=>'btn btn-default btn-block')));
 
         $editForm->handleRequest($request);
 
@@ -168,27 +170,31 @@ class PostCategoryController extends AdminController
 
             $this->addFlash('success', 'Category updated successfully.');
 
-            return $this->redirectToRoute('admin_category_edit', array('id' => $cat->getId()));
+            if ($editForm->get('saveAndClose')->isClicked()) {
+                return $this->redirectToRoute('admin_category_index', array('catroot'=> $catroot));
+            }
+
+            return $this->redirectToRoute('admin_category_edit', array('id' => $cat->getId(),'catroot'=> $catroot));
         }
 
         return $this->render('admin/postcategory/edit.html.twig', array(
             'cat'        => $cat,
+            'catroot'        => $catroot,
             'edit_form'   => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
         ));
     }
 
     /**
      * Deletes a Post entity.
      *
-     * @Route("/{id}", name="admin_category_delete")
+     * @Route("/{catroot}/{id}", name="admin_category_delete")
      * @Method("DELETE")
      *
      * The Security annotation value is an expression (if it evaluates to false,
      * the authorization mechanism will prevent the user accessing this resource).
      * The isAuthor() method is defined in the AppBundle\Entity\Post entity.
      */
-    public function deleteAction(Request $request, PostCategory $cat)
+    public function deleteAction($catroot,Request $request, PostCategory $cat)
     {
         if (null === $this->getUser() || !$this->hasRole('ROLE_ADMIN')) {
             $this->addFlash('error', 'Posts can only be deleted by administrators.');
@@ -207,22 +213,6 @@ class PostCategoryController extends AdminController
             $this->addFlash('success', 'Category deleted successfully.');
         }
 
-        return $this->redirectToRoute('admin_caterogy_index');
-    }
-
-    /**
-     * Creates a form to delete a Category entity by id.
-     *
-    * @param Post $post The post object
-     *
-     * @return \Symfony\Component\Form\Form The form
-     */
-    private function createDeleteForm(PostCategory $cat)
-    {
-        return $this->createFormBuilder()
-            ->setAction($this->generateUrl('admin_category_delete', array('id' => $cat->getId())))
-            ->setMethod('DELETE')
-            ->getForm()
-        ;
+        return $this->redirectToRoute('admin_caterogy_index',array('catroot'=> $catroot));
     }
 }

@@ -78,7 +78,8 @@ class UserController extends AdminController
 
         // See http://symfony.com/doc/current/book/forms.html#submitting-forms-with-multiple-buttons
         $form = $this->createForm('AppBundle\Form\UserType', $user)
-            ->add('saveAndCreateNew', 'Symfony\Component\Form\Extension\Core\Type\SubmitType');
+                     ->add('saveAndClose', 'Symfony\Component\Form\Extension\Core\Type\SubmitType',array('attr'=>array('class'=>'btn btn-primary btn-block')))
+                     ->add('saveAndCreateNew', 'Symfony\Component\Form\Extension\Core\Type\SubmitType',array('attr'=>array('class'=>'btn btn-default btn-block')));
 
         $form->handleRequest($request);
 
@@ -128,11 +129,8 @@ class UserController extends AdminController
             return $this->redirectToRoute('admin_user_index');
         }
 
-        $deleteForm = $this->createDeleteForm($user);
-
         return $this->render('admin/user/show.html.twig', array(
             'user'        => $user,
-            'delete_form' => $deleteForm->createView(),
         ));
     }
 
@@ -152,8 +150,9 @@ class UserController extends AdminController
         $entityManager = $this->getDoctrine()->getManager();
         $userManager = $this->get('fos_user.user_manager');
 
-        $editForm = $this->createForm('AppBundle\Form\UserType', $user);
-        $deleteForm = $this->createDeleteForm($user);
+        $editForm = $this->createForm('AppBundle\Form\UserType', $user)
+                         ->add('saveAndClose', 'Symfony\Component\Form\Extension\Core\Type\SubmitType',array('attr'=>array('class'=>'btn btn-primary btn-block')))
+                         ->add('save', 'Symfony\Component\Form\Extension\Core\Type\SubmitType',array('label'=>'action.save','attr'=>array('class'=>'btn btn-default btn-block')));
 
         $editForm->handleRequest($request);
 
@@ -165,13 +164,16 @@ class UserController extends AdminController
 
             $this->addFlash('success', 'User Successfully Updated');
 
+            if ($editForm->get('saveAndClose')->isClicked()) {
+                return $this->redirectToRoute('admin_user_index');
+            }
+
             return $this->redirectToRoute('admin_user_edit', array('id' => $user->getId()));
         }
 
         return $this->render('admin/user/edit.html.twig', array(
             'user'        => $user,
             'edit_form'   => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
         ));
     }
 
@@ -205,27 +207,5 @@ class UserController extends AdminController
         }
 
         return $this->redirectToRoute('admin_user_index');
-    }
-
-    /**
-     * Creates a form to delete a Post entity by id.
-     *
-     * This is necessary because browsers don't support HTTP methods different
-     * from GET and POST. Since the controller that removes the blog posts expects
-     * a DELETE method, the trick is to create a simple form that *fakes* the
-     * HTTP DELETE method.
-     * See http://symfony.com/doc/current/cookbook/routing/method_parameters.html.
-     *
-     * @param Post $post The post object
-     *
-     * @return \Symfony\Component\Form\Form The form
-     */
-    private function createDeleteForm(User $user)
-    {
-        return $this->createFormBuilder()
-            ->setAction($this->generateUrl('admin_user_delete', array('id' => $user->getId())))
-            ->setMethod('DELETE')
-            ->getForm()
-        ;
     }
 }

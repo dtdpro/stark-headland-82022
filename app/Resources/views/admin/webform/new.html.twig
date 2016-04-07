@@ -1,0 +1,48 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block body_id 'admin_post_new' %}
+
+{% block com_title %}Create Web Form{% endblock %}
+
+{% block com_actions %}
+    <ul class="nav navbar-nav navbar-right">
+        <li><a href="{{ path('admin_webform_index') }}"><i class="fa fa-chevron-left"></i> Back to the Web Form list</a></li>
+    </ul>
+{% endblock %}
+
+
+
+{% block body %}
+
+    {{ form_start(form, { attr: attr|default({}) }) }}
+    <div class="row" style="margin-top: 15px;">
+        <div id="main" class="col-sm-9">
+            {{ include('default/_flash_messages.html.twig') }}
+            {{ form_row(form.title) }}
+            {{ form_row(form.category) }}
+            {{ form_row(form.summary) }}
+            {{ form_row(form.content_before_top) }}
+            {{ form_row(form.content_before_bottom) }}
+            {{ form_row(form.content_results_top) }}
+            {{ form_row(form.content_results_bottom) }}
+        </div>
+        <div id="sidebar" class="col-sm-3">
+            {{ form_row(form.saveAndClose) }}
+            {{ form_row(form.saveAndCreateNew) }}
+            {{ form_row(form.status) }}
+            {{ form_row(form.publishedAt) }}
+            {{ form_row(form.user) }}
+            {{ form_row(form.form_open) }}
+            {{ form_row(form.form_close) }}
+            {{ form_row(form.allow_unreg) }}
+            {{ form_row(form.allow_multiple) }}
+        </div>
+    </div>
+    {{ form_end(form) }}
+
+
+{% endblock %}
+
+{% block bot_right %}
+    {{ show_source_code(_self) }}
+{% endblock %}

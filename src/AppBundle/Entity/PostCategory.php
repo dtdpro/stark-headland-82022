@@ -101,7 +101,7 @@ class PostCategory
     public function __toString()
     {
         $output = '';
-        for ($i=1;$i<=$this->lvl;$i++) {
+        for ($i=1;$i<=$this->lvl-1;$i++) {
             $output = $output .'-';
         }
         $output = $output .' '.$this->getName();

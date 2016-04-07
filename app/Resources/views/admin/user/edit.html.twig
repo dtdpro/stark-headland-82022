@@ -10,27 +10,28 @@
     </ul>
 {% endblock %}
 
-{% block main %}
-    {{ include('default/_flash_messages.html.twig') }}
+{% block body %}
 
-    {{ include('admin/user/_form.html.twig', {
-        form: edit_form,
-        button_label: 'action.save'|trans,
-        include_back_to_home_link: true,
-    }, with_context = false) }}
-{% endblock %}
+    {{ form_start(edit_form, { attr: attr|default({}) }) }}
+    <div class="row">
+        <div id="main" class="col-sm-9">
+            {{ include('default/_flash_messages.html.twig') }}
+            {{ form_row(edit_form.first_name) }}
+            {{ form_row(edit_form.last_name) }}
+            {{ form_row(edit_form.username) }}
+            {{ form_row(edit_form.email) }}
+            {{ form_row(edit_form.plainPassword) }}
+            {{ form_row(edit_form.roles) }}
+        </div>
 
-{% block sidebar %}
-    <div class="section actions">
-        {{ include('admin/user/_form.html.twig', {
-            form: delete_form,
-            button_label: 'Delete User',
-            button_css: 'btn btn-lg btn-block btn-danger',
-            show_confirmation: true,
-        }, with_context = false) }}
+        <div id="sidebar" class="col-sm-3">
+            {{ form_row(edit_form.saveAndClose) }}
+            {{ form_row(edit_form.save) }}
+            {{ form_row(edit_form.enabled) }}
+        </div>
     </div>
+    {{ form_end(edit_form) }}
 
-    {{ parent() }}
 {% endblock %}
 
 {% block bot_right %}
