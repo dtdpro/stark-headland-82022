@@ -9,6 +9,19 @@
         <meta charset="UTF-8" />
         <title>{% block title %}The Demo Application{% endblock %}</title>
 
+        {% block javascripts %}
+            {% javascripts filter="?jsqueeze" output="js/home.js"
+            "%kernel.root_dir%/Resources/assets/js/jquery-2.1.4.js"
+            "%kernel.root_dir%/Resources/assets/js/jquery-ui-1.11.4.js"
+            "%kernel.root_dir%/Resources/assets/js/moment.js"
+            "%kernel.root_dir%/Resources/assets/js/bootstrap-3.3.4.js"
+            "%kernel.root_dir%/Resources/assets/js/highlight.pack.js"
+            "%kernel.root_dir%/Resources/assets/js/bootstrap-datetimepicker.min.js"
+            "%kernel.root_dir%/Resources/assets/js/main.js" %}
+            <script src="{{ asset_url }}"></script>
+            {% endjavascripts %}
+        {% endblock %}
+
         {% block stylesheets %}
             {% stylesheets filter='lessphp' output='css/home.css'
                 '%kernel.root_dir%/Resources/assets/less/bootstrap.less'
@@ -121,18 +134,6 @@
                     </div>
                 </div>
             </footer>
-        {% endblock %}
-
-        {% block javascripts %}
-           {% javascripts filter="?jsqueeze" output="js/home.js"
-                "%kernel.root_dir%/Resources/assets/js/jquery-2.1.4.js"
-                "%kernel.root_dir%/Resources/assets/js/moment.js"
-                "%kernel.root_dir%/Resources/assets/js/bootstrap-3.3.4.js"
-                "%kernel.root_dir%/Resources/assets/js/highlight.pack.js"
-                "%kernel.root_dir%/Resources/assets/js/bootstrap-datetimepicker.min.js"
-                "%kernel.root_dir%/Resources/assets/js/main.js" %}
-                <script src="{{ asset_url }}"></script>
-            {% endjavascripts %}
         {% endblock %}
 
         <!-- Page rendered on {{ 'now'|localizeddate('long', 'long') }} -->
