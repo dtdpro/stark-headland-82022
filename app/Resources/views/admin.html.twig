@@ -11,7 +11,7 @@
 
 
         {% block javascripts %}
-            {% javascripts filter="?jsqueeze" output="js/admin.js"
+            {% javascripts filter="?jsqueeze" output="js/tda-admin.js"
             "%kernel.root_dir%/Resources/assets/js/jquery-2.1.4.js"
             "%kernel.root_dir%/Resources/assets/js/jquery-ui-1.11.4.js"
             "%kernel.root_dir%/Resources/assets/js/moment.js"
@@ -26,7 +26,7 @@
         {% endblock %}
         {% block stylesheets %}
 
-            {% stylesheets filter="scssphp" output="css/admin.css"
+            {% stylesheets filter="scssphp" output="css/tda-admin.css"
             "%kernel.root_dir%/Resources/assets/scss/bootstrap.admin.scss"
             "%kernel.root_dir%/Resources/assets/scss/font-awesome.scss"
             "%kernel.root_dir%/Resources/assets/css/*.css"
