@@ -28,6 +28,8 @@
                 <th class="text-center"><i class="fa fa-tag"></i> {{ 'label.category'|trans }}</th>
                 <th><i class="fa fa-calendar"></i> {{ 'label.published_at'|trans }}</th>
                 <th><i class="fa fa-calendar"></i> {{ 'label.updated_at'|trans }}</th>
+                <th class="text-center"><i class="fa fa-square-o"></i> Questions</th>
+                <th class="text-center"><i class="fa fa-check-square"></i> Submissions</th>
                 <th class="text-center"><i class="fa fa-cogs"></i> {{ 'label.actions'|trans }}</th>
             </tr>
         </thead>
@@ -41,9 +43,11 @@
                 <td class="text-center">{{ wf.category.name }}</td>
                 <td>{% if wf.publishedAt %}{{ wf.publishedAt|localizeddate('short', 'short') }}{% endif %}</td>
                 <td>{% if wf.updatedAt %}{{ wf.updatedAt|localizeddate('short', 'short') }}{% endif %}</td>
+                <td class="text-center">{{ wf.questions|length }}</td>
+                <td class="text-center">{{ wf.submissions|length }}</td>
                 <td class="text-center">
                     <div class="btn-group" role="group" aria-label="actions">
-                        <a href="" data-toggle="tooltip" title="{{ 'action.show'|trans }}">
+                        <a href="{{ path('admin_webform_results', { id: wf.id }) }}" data-toggle="tooltip" title="{{ 'action.show'|trans }}">
                             <i class="fa fa-eye"></i>
                         </a>
                         <a href="{{ path('admin_webform_edit', { id: wf.id }) }}" data-toggle="tooltip" title="{{ 'action.edit'|trans }}">

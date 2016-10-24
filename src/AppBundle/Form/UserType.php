@@ -54,7 +54,7 @@ class UserType extends AbstractType
             ))
             ->add('email', null, array('label' => 'Email'))
             ->add('plainPassword', 'repeated', array('type' => 'password','required'=>false,'first_options' => array('label' => 'Password'),'second_options' => array('label' => 'Confirm Password'),'invalid_message' => 'Passwords do not match',))
-            ->add('roles', 'choice', array('choices'=>array('ROLE_USER'=>'Registered User','ROLE_EDITOR'=>'Editor','ROLE_ADMIN'=>'Administrator','ROLE_SUPER_ADMIN'=>'Super Administrator'), 'expanded'=>true, 'multiple'=>true, 'label' => 'Roles'))
+            ->add('roles', 'choice', array('choices'=>$this->refactorRoles($options['roles']), 'expanded'=>true, 'multiple'=>true, 'label' => 'Roles'))
             ->add('enabled', CheckSwitchType::class);
     }
 
@@ -65,6 +65,29 @@ class UserType extends AbstractType
     {
         $resolver->setDefaults(array(
             'data_class' => 'AppBundle\Entity\User',
+            'roles' => null
         ));
+    }
+
+    private function refactorRoles($originRoles)
+    {
+        $roles = array();
+        $rolesAdded = array();
+
+        // Add herited roles
+        foreach ($originRoles as $roleParent => $rolesHerit) {
+            $tmpRoles = array_values($rolesHerit);
+            $rolesAdded = array_merge($rolesAdded, $tmpRoles);
+            $roles[$roleParent] = array_combine($tmpRoles, $tmpRoles);
+        }
+        // Add missing superparent roles
+        $rolesParent = array_keys($originRoles);
+        foreach ($rolesParent as $roleParent) {
+            if (!in_array($roleParent, $rolesAdded)) {
+                $roles['-----'][$roleParent] = $roleParent;
+            }
+        }
+
+        return $roles;
     }
 }

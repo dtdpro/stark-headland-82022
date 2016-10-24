@@ -1,0 +1,11 @@
+<ul class="{{ options.menu_class }}">
+    {% for m in menuitems %}
+            {% set item_route = path(m.route,m.params) %}
+            <li class="{% if app.request.requestUri == item_route %}active{% endif %}">
+                <a href="{{ item_route }}">
+                    {% if m.icon %}<i class="fa {{ m.icon }}"></i>{% endif %}
+                    {{ m.name }}
+                </a>
+            </li>
+    {% endfor %}
+</ul>

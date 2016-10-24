@@ -152,6 +152,3 @@ vich_uploader:
             inject_on_load: true
             delete_on_remove: true
             delete_on_update: true
-
-ktw_database_menu:
-    menu_item_entity: kevintweber\KtwDatabaseMenuBundle\Entity\MenuItem

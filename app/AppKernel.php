@@ -27,8 +27,6 @@ class AppKernel extends Kernel
             new Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle(),
             new Knp\Bundle\GaufretteBundle\KnpGaufretteBundle(),
             new Vich\UploaderBundle\VichUploaderBundle(),
-            new Knp\Bundle\MenuBundle\KnpMenuBundle(),
-            new kevintweber\KtwDatabaseMenuBundle\KtwDatabaseMenuBundle(),
         );
 
         // Some bundles are only used while developing the application or during

@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block body_id 'webform_show' %}
+
+{% block main %}
+    <h1>{{ webform.title }}</h1>
+    <p>{{ webform.publishedAt|localizeddate('long', 'medium') }} by <strong>{{ webform.user }}</strong></p>
+    <ul class="breadcrumb">
+        {{ _self.catTree(webform.category) }}
+    </ul>
+    {{ webform.contentBeforeTop|raw }}
+    {{ form_start(form) }}
+    {% for q in webform.questions %}
+        {{ form_row(attribute(form, 'field_'~q.id)) }}
+    {% endfor %}
+    {{ webform.contentBeforeBottom|raw }}
+    {{ form_row(form.submit) }}
+    {{ form_end(form) }}
+    <h6>Last Updated: {{ webform.updatedAt|localizeddate('long', 'medium') }}</h6>
+
+{% endblock %}
+
+{% block sidebar %}
+    {{ parent() }}
+
+    {{ show_source_code(_self) }}
+{% endblock %}
+
+{% macro catTree(category) %}
+    {% if category.parent %}
+        {{ _self.catTree(category.parent) }}
+    {% endif %}
+    <li>{{ category.name }}</li>
+{% endmacro %}

@@ -29,7 +29,7 @@ class WebFormQuestionController extends AdminController
      * @Route("/newquestion/{id}", name="admin_webform_question_new")
      * @Method({"GET", "POST"})
      */
-    public function newPostCommentAction(WebForm $webform, Request $request)
+    public function newPostQuestionAction(WebForm $webform, Request $request)
     {
         if (null === $this->getUser() || !$this->hasRole('ROLE_ADMIN')) {
             $this->addFlash('error', 'Web Form Question(s) can only be added by admins.');
@@ -62,10 +62,10 @@ class WebFormQuestionController extends AdminController
      * @Route("/{id}/load", requirements={"id" = "\d+"}, name="admin_webform_question_load")
      * @Method({"GET", "POST"})
      */
-    public function loadComment(WebFormQuestion $question, Request $request)
+    public function loadWebFormQuestion(WebFormQuestion $question, Request $request)
     {
         if (null === $this->getUser() || !$this->hasRole('ROLE_ADMIN')) {
-            $this->addFlash('error', 'Web Form Quesstion(s) can only be edited by their authors.');
+            $this->addFlash('error', 'Web Form Question(s) can only be edited by their authors.');
             return $this->redirectToRoute('admin_webform_index');
         }
 

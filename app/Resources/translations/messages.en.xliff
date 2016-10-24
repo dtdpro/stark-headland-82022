@@ -263,9 +263,9 @@
                 <source>menu.post_list</source>
                 <target>Posts</target>
             </trans-unit>
-            <trans-unit id="menu.back_to_blog">
-                <source>menu.back_to_blog</source>
-                <target>Back to blog</target>
+            <trans-unit id="menu.back_to_site">
+                <source>menu.back_to_site</source>
+                <target>Back to site</target>
             </trans-unit>
             <trans-unit id="menu.homepage">
                 <source>menu.homepage</source>
@@ -323,7 +323,7 @@
 
             <trans-unit id="help.app_description">
                 <source>help.app_description</source>
-                <target><![CDATA[This is a <strong>demo application</strong> built in the Symfony Framework to illustrate the recommended way of developing Symfony applications based upon the Symdony Demo Application. ]]></target>
+                <target><![CDATA[This is an <strong>in development application</strong> built in the Symfony Framework  based upon the Symdony Demo Application. ]]></target>
             </trans-unit>
             <trans-unit id="help.show_code">
                 <source>help.show_code</source>

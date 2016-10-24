@@ -175,10 +175,43 @@ class WebFormController extends AdminController
             return $this->redirectToRoute('admin_webform_edit', array('id' => $webform->getId()));
         }
 
+
+
+        $answers = array();
+        $repository = $this->getDoctrine()->getRepository('AppBundle:WebFormQuestionOption');
+        $optres = $repository->findAll();
+
+        foreach ($optres as $o) {
+            $answers[$o->getId()] = $o->getContent();
+        }
+
         return $this->render('admin/webform/edit.html.twig', array(
             'webform'        => $webform,
             'edit_form'   => $editForm->createView(),
+            'answers'   => $answers,
         ));
+    }
+    
+    /**
+     * Lists form results.
+     *
+     * @Route("/{id}/results", name="admin_webform_results", requirements={"id" = "\d+"}, defaults={"page" = 1})
+     * @Route("/{id}/results/{page}", name="admin_webform_results_paginated", requirements={"page" : "\d+","id" = "\d+"})
+     * @Method({"GET", "POST"})
+     */
+    public function showResultsAction(WebForm $webform, $page, Request $request)
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+
+        $answers = array();
+        $repository = $this->getDoctrine()->getRepository('AppBundle:WebFormQuestionOption');
+        $optres = $repository->findAll();
+
+        foreach ($optres as $o) {
+            $answers[$o->getId()] = $o->getContent();
+        }
+
+        return $this->render('admin/webform/results.html.twig', array('webform' => $webform,'answers'=>$answers));
     }
 
 

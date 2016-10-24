@@ -13,10 +13,13 @@
 <p>Welcome to the admin panel.</p>
     <div class="list-group">
         <a href="{{ path('admin_post_index') }}" class="list-group-item"><i class="fa fa-list-alt"></i> {{ 'menu.post_list'|trans }}</a>
+        <a href="{{ path('admin_webform_index') }}" class="list-group-item"><i class="fa fa-clipboard"></i> Web Forms</a>
         <a href="{{ path('admin_category_index',{'catroot':'blog'}) }}" class="list-group-item"><i class="fa fa-tag"></i> Categories: Blog</a>
         <a href="{{ path('admin_category_index',{'catroot':'form'}) }}" class="list-group-item"><i class="fa fa-tag"></i> Categories: Form</a>
+        <a href="{{ path('admin_menu_index') }}" class="list-group-item"><i class="fa fa-bars"></i> Menus</a>
         <a href="{{ path('admin_user_index') }}" class="list-group-item"><i class="fa fa-user"></i> Users</a>
     </div>
+    {{ app.request.HttpHost }}
 {% endblock %}
 
 {% block sidebar %}

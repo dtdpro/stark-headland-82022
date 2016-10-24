@@ -148,7 +148,8 @@
                             <p>{{ 'mit_license'|trans }} </p>
                         </div>
                         <div id="footer-resources" class="col-md-6">
-                            <p>PHP {{ phpver() }}
+                            <p>PHP {{ phpver() }}<br />{{ app.request.getSchemeAndHttpHost() }}{{ app.request.getBaseURL() }}
+
                             </p>
                         </div>
                     </div>

@@ -1,0 +1,32 @@
+<table class="table">
+    <thead>
+    <tr>
+        <th>Date</th>
+        {% for q in webform.questions %}
+            <th>{{ q.Content }}</th>
+        {% endfor %}
+    </tr>
+    </thead>
+    <tbody>
+    {% for r in webform.submissions %}
+        <tr>
+            <td>{{ r.publishedAt|date }}</td>
+            {% for q in webform.questions %}
+                {% set fn = "field_"~q.id %}
+                <td>
+                    {% if r.formDataArray[fn] is defined %}
+                        {% if q.type == 'multicbox' %}
+                            {% for a in r.formDataArray[fn] %}{{ answers[a] }}<br>{% endfor %}
+                        {% elseif q.type == 'radio' or q.type == 'dropdown' %}
+                            {{ answers[r.formDataArray[fn]] }}
+                        {% else %}
+                            {{ r.formDataArray[fn] }}
+                        {% endif %}
+
+                    {% endif %}
+                </td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

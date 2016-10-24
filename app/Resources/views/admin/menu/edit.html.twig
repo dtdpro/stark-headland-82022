@@ -1,12 +1,12 @@
 {% extends 'admin/layout.html.twig' %}
 
-{% block body_id 'admin_post_edit' %}
+{% block body_id 'admin_menu_edit' %}
 
-{% block com_title %}Edit Web Form: {{ webform.title }}{% endblock %}
+{% block com_title %}Edit Menu: {{ menu.name }}{% endblock %}
 
 {% block com_actions %}
     <ul class="nav navbar-nav navbar-right">
-        <li><a href="{{ path('admin_webform_index') }}"><i class="fa fa-chevron-left"></i> Back to the Web Form list</a></li>
+        <li><a href="{{ path('admin_menu_index') }}"><i class="fa fa-chevron-left"></i> Back to Menu List</a></li>
     </ul>
 {% endblock %}
 
@@ -14,45 +14,31 @@
 
     <!-- Nav tabs -->
     <ul class="nav nav-tabs" role="tablist">
-        <li role="presentation" class="active"><a href="#webform" aria-controls="webform" role="tab" data-toggle="tab">Form</a></li>
-        <li role="presentation"><a href="#questions" aria-controls="questions" role="tab" data-toggle="tab">Questions</a></li>
-        <li role="presentation"><a href="#results" aria-controls="results" role="tab" data-toggle="tab">Results</a></li>
+        <li role="presentation" class="active"><a href="#menuinfo" aria-controls="menuinfo" role="tab" data-toggle="tab">Menu</a></li>
+        <li role="presentation"><a href="#menuitems" aria-controls="menuitems" role="tab" data-toggle="tab">Menu Items</a></li>
     </ul>
 
     <!-- Tab panes -->
     <div class="tab-content">
 
-        <!-- Webform -->
-        <div role="tabpanel" class="tab-pane fade in active" id="webform">
+        <!-- Menu -->
+        <div role="tabpanel" class="tab-pane fade in active" id="menuinfo">
             {{ form_start(edit_form, { attr: attr|default({}) }) }}
             <div class="row" style="margin-top: 15px;">
                 <div id="main" class="col-sm-9">
                     {{ include('default/_flash_messages.html.twig') }}
-                    {{ form_row(edit_form.title) }}
-                    {{ form_row(edit_form.category) }}
-                    {{ form_row(edit_form.summary) }}
-                    {{ form_row(edit_form.content_before_top) }}
-                    {{ form_row(edit_form.content_before_bottom) }}
-                    {{ form_row(edit_form.content_results_top) }}
-                    {{ form_row(edit_form.content_results_bottom) }}
+                    {{ form_row(edit_form.name) }}
                 </div>
                 <div id="sidebar" class="col-sm-3">
                     {{ form_row(edit_form.saveAndClose) }}
                     {{ form_row(edit_form.save) }}
-                    {{ form_row(edit_form.status) }}
-                    {{ form_row(edit_form.publishedAt) }}
-                    {{ form_row(edit_form.user) }}
-                    {{ form_row(edit_form.form_open) }}
-                    {{ form_row(edit_form.form_close) }}
-                    {{ form_row(edit_form.allow_unreg) }}
-                    {{ form_row(edit_form.allow_multiple) }}
                 </div>
             </div>
             {{ form_end(edit_form) }}
         </div>
 
-        <!-- Questions -->
-        <div role="tabpanel" class="tab-pane fade" id="questions">
+        <!-- Menu Items -->
+        <div role="tabpanel" class="tab-pane fade" id="menuitems">
             <div class="text-right" style="margin-top: 15px;">
                 <button id="questions-reload" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i> Refresh</button>
                 <button id="questions-add" class="btn btn-success btn-sm"><i class="fa fa-plus"></i> Add</button>
@@ -64,23 +50,18 @@
                         <th></th>
                         <th><input type="checkbox" id="checkAllQuestions"/></th>
                         <th>ID</th>
-                        <th><i class="fa fa-question-circle"></i> Type</th>
-                        <th><i class="fa fa-question"></i> Question</th>
-                        <th class="text-center"><i class="fa fa-flag"></i> Required</th>
-                        <th class="text-center"><i class="fa fa-check"></i> Status</th>
+                        <th><i class="fa fa-bars"></i> Name</th>
+                        <th><i class="fa fa-question"></i> Type</th>
+                        <th class="text-center"><i class="fa fa-flag"></i> Status</th>
+                        <th class="text-center"><i class="fa fa-check"></i> Roles</th>
                         <th class="text-center"><i class="fa fa-cogs"></i> Actions</th></tr>
                     </thead>
                     <tbody id="questions-data">
-                    {{ include('admin/webform/questions.html.twig') }}
+                    {% include('admin/menu/children.html.twig') %}
                     </tbody>
                 </table>
                 <input type="hidden" value="" name="task" id="questionsTask">
             </form>
-        </div>
-
-        <!-- Resuls -->
-        <div role="tabpanel" class="tab-pane fade" id="results">
-            {% include(':admin/webform:_results.html.twig') %}
         </div>
     </div>
 
@@ -121,7 +102,7 @@
                                 <th></th>
                                 <th><input type="checkbox" id="checkAllOptions"/></th>
                                 <th>ID</th>
-                                <th>Option</th>
+                                <th>Name</th>
                                 <th class="text-center">Status</th>
                                 <th class="text-center"><i class="fa fa-cogs"></i> Actions</th></tr>
                             </thead>
@@ -276,7 +257,7 @@
 
         function reloadQuestions() {
             loadingDialog.show();
-            var url = "{{ path('admin_questions_bywebform',{'id':webform.id}) }}";
+            var url = "{{ path('admin_questions_bywebform',{'id':menu.id}) }}";
             jQuery.get(url, "",
                 function (data) {
                     $("#questions-data").empty().append(data);
@@ -343,7 +324,7 @@
 
         function newQuestion() {
             $("#questionModal-label").empty().append('New Question');
-            var url = "{{ path('admin_webform_question_new',{'id':webform.id}) }}";
+            var url = "{{ path('admin_webform_question_new',{'id':menu.id}) }}";
             jQuery.get(url, "",
                 function (data) {
                     $("#questionModal-body").empty().append(data);

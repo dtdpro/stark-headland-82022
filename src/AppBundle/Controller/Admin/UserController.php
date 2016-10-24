@@ -77,7 +77,7 @@ class UserController extends AdminController
         $user = new User();
 
         // See http://symfony.com/doc/current/book/forms.html#submitting-forms-with-multiple-buttons
-        $form = $this->createForm('AppBundle\Form\UserType', $user)
+        $form = $this->createForm('AppBundle\Form\UserType', $user, array('roles' => $this->container->getParameter('security.role_hierarchy.roles')))
                      ->add('saveAndClose', 'Symfony\Component\Form\Extension\Core\Type\SubmitType',array('attr'=>array('class'=>'btn btn-primary btn-block')))
                      ->add('saveAndCreateNew', 'Symfony\Component\Form\Extension\Core\Type\SubmitType',array('attr'=>array('class'=>'btn btn-default btn-block')));
 
@@ -150,7 +150,7 @@ class UserController extends AdminController
         $entityManager = $this->getDoctrine()->getManager();
         $userManager = $this->get('fos_user.user_manager');
 
-        $editForm = $this->createForm('AppBundle\Form\UserType', $user)
+        $editForm = $this->createForm('AppBundle\Form\UserType', $user, array('roles' => $this->container->getParameter('security.role_hierarchy.roles')))
                          ->add('saveAndClose', 'Symfony\Component\Form\Extension\Core\Type\SubmitType',array('attr'=>array('class'=>'btn btn-primary btn-block')))
                          ->add('save', 'Symfony\Component\Form\Extension\Core\Type\SubmitType',array('label'=>'action.save','attr'=>array('class'=>'btn btn-default btn-block')));
 

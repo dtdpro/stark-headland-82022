@@ -12,7 +12,7 @@ services:
     app.twig.app_extension:
         public:    false
         class:     AppBundle\Twig\AppExtension
-        arguments: ['@markdown', %app_locales%]
+        arguments: ['@markdown', %app_locales%, '@doctrine.orm.entity_manager', '@security.token_storage', '@security.authorization_checker']
         tags:
             - { name: twig.extension }
 

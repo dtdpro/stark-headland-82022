@@ -15,7 +15,7 @@
     </li>
     <li class="{% if 'webform' in app.request.attributes.get('_route') %} active{% endif %}">
         <a href="{{ path('admin_webform_index') }}">
-            <i class="fa fa-list-alt"></i> Web Forms
+            <i class="fa fa-clipboard"></i> Web Forms
         </a>
     </li>
     <li class="dropdown{% if 'category' in app.request.attributes.get('_route') %} active{% endif %}">
@@ -33,6 +33,11 @@
             </li>
         </ul>
     </li>
+    <li class="{% if 'menu' in app.request.attributes.get('_route') %} active{% endif %}">
+        <a href="{{ path('admin_menu_index') }}">
+            <i class="fa fa-bars"></i> Menus
+        </a>
+    </li>
     <li class="{% if 'user' in app.request.attributes.get('_route') %} active{% endif %}">
         <a href="{{ path('admin_user_index') }}">
             <i class="fa fa-user"></i> Users
@@ -40,7 +45,7 @@
     </li>
     <li>
         <a href="{{ path('blog_index') }}">
-            <i class="fa fa-home"></i> {{ 'menu.back_to_blog'|trans }}
+            <i class="fa fa-home"></i> {{ 'menu.back_to_site'|trans }}
         </a>
     </li>
 {% endblock %}

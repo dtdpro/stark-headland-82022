@@ -13,6 +13,9 @@ namespace AppBundle\Twig;
 
 use AppBundle\Utils\Markdown;
 use Symfony\Component\Intl\Intl;
+use Doctrine\ORM\EntityManager;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 
 /**
  * This Twig extension adds a new 'md2html' filter to easily transform Markdown
@@ -34,14 +37,32 @@ class AppExtension extends \Twig_Extension
     private $parser;
 
     /**
+     * @var EntityManager
+     */
+    private $em;
+
+    /**
+     * @var TokenStorage
+     */
+    private $security_token;
+
+    /**
+     * @var AuthorizationChecker
+     */
+    private $auth_checker;
+
+    /**
      * @var array
      */
     private $locales;
 
-    public function __construct(Markdown $parser, $locales)
+    public function __construct(Markdown $parser, $locales, EntityManager $em, TokenStorage $token, AuthorizationChecker $authcheck)
     {
         $this->parser = $parser;
         $this->locales = $locales;
+        $this->em = $em;
+        $this->security_token = $token->getToken();
+        $this->auth_checker = $authcheck;
     }
 
     /**
@@ -62,6 +83,7 @@ class AppExtension extends \Twig_Extension
         return array(
             new \Twig_SimpleFunction('locales', array($this, 'getLocales')),
             new \Twig_SimpleFunction('phpver', array($this, 'phpVer')),
+            new \Twig_SimpleFunction('menu_render', array($this, 'menuRender'), array('is_safe' => array('html'),'needs_environment' => true)),
         );
     }
 
@@ -114,5 +136,25 @@ class AppExtension extends \Twig_Extension
     public function phpVer()
     {
         return phpversion();
+    }
+
+    public function menuRender(\Twig_Environment $twig, $menu, array $menu_options = array())
+    {
+        $default_options = array('menu_layout'=>'navline');
+        $options = array_merge($default_options,$menu_options);
+        $repo = $this->em->getRepository('AppBundle:MenuItem');
+        $menu = $repo->getMenu($menu,$this->auth_checker);
+        if ($options['menu_layout'] == 'sidebar') {
+            $options['menu_class'] = 'nav nav-pills nav-stacked';
+        } else if ($options['menu_layout'] == 'navbar') {
+            $options['menu_class'] = 'nav navbar-nav';
+        } else if ($options['menu_layout'] == 'navbar-right') {
+            $options['menu_class'] = 'nav navbar-nav navbar-right';
+        } else if ($options['menu_layout'] == 'footnav') {
+            $options['menu_class'] = 'nav-footer';
+        } else {
+            $options['menu_class'] = 'nav nav-pills';
+        }
+        return $twig->render('AppBundle::menu.html.twig',array('menuitems'=>$menu,'options'=>$options));
     }
 }

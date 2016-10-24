@@ -5,7 +5,7 @@
 
 @import "bootstrap/variables";
 @import "bootstrap/mixins";
-@import "bootstrap/flatly-theme/variables";
+@import "bootstrap/dtdcosmo/variables";
 
 //
 // Typography
@@ -94,13 +94,13 @@ header {
 
 // Footer
 footer {
-    background: $gray-lighter;
-    margin-top: 2em;
-    padding-top: 2em;
+    background: $navbar-default-bg;
+    padding-top: 0.5em;
     padding-bottom: 2em;
+    color: $navbar-default-color;
 
     p {
-        color: $gray-dark;
+        color: $navbar-default-color;
         font-size: $font-size-small;
         margin-bottom: .25em;
     }
@@ -109,10 +109,47 @@ footer {
         text-align: right;
 
         i {
-            color: $gray-dark;
+            color: $navbar-default-color;
             font-size: 1.5 * $font-size-large;
             margin-left: .5em;
         }
+    }
+
+    a {
+        color: $navbar-default-link-color;
+    }
+
+    a:hover {
+        color: $navbar-default-link-hover-color;
+    }
+
+    a:active {
+        color: $navbar-default-link-active-color;
+    }
+
+    a:visited {
+        color: $navbar-default-link-color;
+    }
+
+    .nav-footer {
+        list-style-type:none;
+        margin-bottom:0px;
+        padding:0;
+    }
+
+    .nav-footer li {
+        float:left;
+    }
+
+    .nav-footer li + li:before {
+        content:"|";
+        color: $navbar-default-color;
+        margin-right:8px;
+        margin-left:8px;
+    }
+
+    .nav-footer li a {
+        color: $navbar-default-link-color;
     }
 }
 

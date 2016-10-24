@@ -124,11 +124,22 @@ class WebForm {
      */
     private $questions;
 
+    /**
+     * @ORM\OneToMany(
+     *      targetEntity="WebFormSubmission",
+     *      mappedBy="form",
+     *      orphanRemoval=true
+     * )
+     * @ORM\OrderBy({"publishedAt" = "DESC"})
+     */
+    private $submissions;
+
 
     public function __construct() {
         $this->publishedAt = new \DateTime();
         $this->updatedAt   = new \DateTime();
         $this->questions = new ArrayCollection();
+        $this->submissions = new ArrayCollection();
     }
 
     public function getId() {
@@ -346,6 +357,10 @@ class WebForm {
     public function removeQuestions(WebFormQuestion $question)
     {
         $this->questions->removeElement($question);
+    }
+
+    public function getSubmissions() {
+        return $this->submissions;
     }
 }
 
