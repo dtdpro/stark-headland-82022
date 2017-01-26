@@ -98,6 +98,7 @@ class PostCategory
         $this->updatedAt = new \DateTime();
     }
 
+
     public function __toString()
     {
         $output = '';
@@ -150,16 +151,16 @@ class PostCategory
     public function setRoot( $root ) {
         $this->root = $root;
     }
+	public function setParent(PostCategory $parent = null)
+	{
+		$this->parent = $parent;
+	}
 
-    public function setParent(PostCategory $parent = null)
-    {
-        $this->parent = $parent;
-    }
+	public function getParent()
+	{
+		return $this->parent;
+	}
 
-    public function getParent()
-    {
-        return $this->parent;
-    }
 
     public function getPosts() {
         return $this->posts;

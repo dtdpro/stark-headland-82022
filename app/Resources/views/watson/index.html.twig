@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Watson Playground{% endblock %}
+{% block body_id 'watson_index' %}
+
+{% block main %}
+    <div class="alert alert-info" role="alert">This section is currently under Active Development</div>
+    <div class="list-group">
+        <a href="{{ path('text_to_speech') }}" class="list-group-item"><i class="fa fa-volume-up"></i> Text to Speech</a>
+    </div>
+{% endblock %}
+
+{% block sidebar %}
+    {{ parent() }}
+
+{% endblock %}

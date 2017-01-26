@@ -1,11 +1,25 @@
 <ul class="{{ options.menu_class }}">
     {% for m in menuitems %}
             {% set item_route = path(m.route,m.params) %}
-            <li class="{% if app.request.requestUri == item_route %}active{% endif %}">
-                <a href="{{ item_route }}">
+            <li class="{% if app.request.requestUri == item_route %}active{% endif %} {% if m.children %}dropdown{% endif %}">
+                <a {% if m.children %}class="dropdown-toggle" data-toggle="dropdown" {% endif %}href="{{ item_route }}">
                     {% if m.icon %}<i class="fa {{ m.icon }}"></i>{% endif %}
                     {{ m.name }}
+                    {% if m.children %}<i class="fa fa-caret-down"></i>{% endif %}
                 </a>
+                {% if m.children %}
+                    <ul class="dropdown-menu">
+                        {% for c in m.children %}
+                            {% set child_route = path(c.route,c.params) %}
+                            <li class="{% if app.request.requestUri == item_route %}active{% endif %}">
+                                <a href="{{ child_route }}">
+                                    {% if c.icon %}<i class="fa {{ c.icon }}"></i>{% endif %}
+                                    {{ c.name }}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
             </li>
     {% endfor %}
 </ul>

@@ -323,7 +323,7 @@
 
             <trans-unit id="help.app_description">
                 <source>help.app_description</source>
-                <target><![CDATA[This is an <strong>in development application</strong> built in the Symfony Framework  based upon the Symdony Demo Application. ]]></target>
+                <target><![CDATA[This is an <strong>in development application</strong> built in the Symfony framework based upon the Symfony Demo Application. ]]></target>
             </trans-unit>
             <trans-unit id="help.show_code">
                 <source>help.show_code</source>

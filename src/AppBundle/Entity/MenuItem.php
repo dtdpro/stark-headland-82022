@@ -90,7 +90,7 @@ class MenuItem
 	 *
 	 * @ORM\Column(type="boolean")
 	 */
-	protected $displayAnon = true;
+	protected $displayAnon = false;
 
 	/**
 	 * Child items
@@ -405,5 +405,16 @@ class MenuItem
 	 */
 	public function setRoles( $roles ) {
 		$this->roles = $roles;
+	}
+
+
+	public function setParent(MenuItem $parent = null)
+	{
+		$this->parent = $parent;
+	}
+
+	public function getParent()
+	{
+		return $this->parent;
 	}
 }

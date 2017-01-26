@@ -42,3 +42,5 @@ parameters:
     aws_s3_dir:
     aws_cf_url:
     ga_id:
+    watson_text_to_speech_username:
+    watson_text_to_speech_password:

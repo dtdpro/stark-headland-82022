@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Watson Playground: Text to Speech{% endblock %}
+
+{% block body_id 'text_to_speech' %}
+
+{% block main %}
+    <div class="" id="editors">
+        <form id="sppektome">
+            <div class="form-group">
+                <label for="exampleInputEmail1">Voice</label>
+                <select name="voice" id="voice" class="form-control">
+                    <option selected="selected" value="en-GB_KateVoice">Kate</option>
+                    <option value="en-US_AllisonVoice">Allison</option>
+                    <option value="en-US_LisaVoice">Lisa</option>
+                    <option value="en-US_MichaelVoice">Michael</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="exampleInputEmail1">Text</label>
+                <textarea id="speech" class="form-control">{{ 'help.app_description'|trans|raw }}</textarea>
+            </div>
+            <div class="form-group">
+                <button id="speekAndSay" class="btn btn-primary">Speek</button>
+            </div>
+        </form>
+        <div class="well">
+            <audio src="" autoPlay="true" id="audio" controls="controls" class="uk-width-1-1" style="height:30px;"></audio>
+        </div>
+    </div>
+    <script>
+        $(window).resize(function(){
+            resizeEditor();
+        });
+
+        $( document ).ready(function() {
+            resizeEditor();
+        });
+
+        $("#speekAndSay").click(function(e) {
+            audio = document.getElementById('audio');
+            audio.setAttribute('src', '');
+            audio.setAttribute('src', '{{ path('sppek_to_me') }}?voice='+$("#voice").val()+'&speech='+encodeURI($("#speech").val()));
+            audio.setAttribute('type', 'audio/ogg;codecs=opus');
+            e.preventDefault();
+        });
+
+        function resizeEditor() {
+            var e = document.getElementById("editors");
+            var h = (window.innerHeight || document.body.offsetHeight || document.documentElement.offsetHeight) - 250;
+
+            e.style.height = (h+60) + "px";
+        }
+    </script>
+{% endblock %}
+
+{% block sidebar %}
+    {{ parent() }}
+{% endblock %}

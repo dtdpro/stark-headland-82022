@@ -1,3 +1,4 @@
+
 <article class="post">
     <h2>
         <a href="{{ path('blog_post', { slug: post.slug }) }}">
@@ -14,11 +15,12 @@
             <div class="col-md-12">
         {% endif %}
             <p>{{ post.publishedAt|localizeddate('long', 'medium') }} by <strong>{{ post.user }}</strong></p>
-            <ul class="breadcrumb">
-                {{ _self.catTree(post.category) }}
+            {% if post.category is defined %}
+                <ul class="breadcrumb">
+                    {{ _self.catTree(post.category) }}
             </ul>
-
-            {{ post.summary|md2html }}
+            {% endif %}
+                {{ post.summary|md2html }}
         </div>
     </div>
 </article>

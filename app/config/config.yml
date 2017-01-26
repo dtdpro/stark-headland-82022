@@ -152,3 +152,9 @@ vich_uploader:
             inject_on_load: true
             delete_on_remove: true
             delete_on_update: true
+
+app:
+    watson:
+        text_to_speech:
+            username: "%watson_text_to_speech_username%"
+            password: "%watson_text_to_speech_password%"

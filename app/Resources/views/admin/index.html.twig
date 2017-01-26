@@ -19,7 +19,6 @@
         <a href="{{ path('admin_menu_index') }}" class="list-group-item"><i class="fa fa-bars"></i> Menus</a>
         <a href="{{ path('admin_user_index') }}" class="list-group-item"><i class="fa fa-user"></i> Users</a>
     </div>
-    {{ app.request.HttpHost }}
 {% endblock %}
 
 {% block sidebar %}
@@ -27,5 +26,4 @@
 {% endblock %}
 
 {% block bot_right %}
-    {{ show_source_code(_self) }}
 {% endblock %}

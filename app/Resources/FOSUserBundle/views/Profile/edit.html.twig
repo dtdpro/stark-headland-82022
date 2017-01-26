@@ -14,8 +14,6 @@
 {% block sidebar %}
     <a href="{{ path('fos_user_change_password') }}" class="btn btn-default btn-block"><i class="uk-icon-key"></i> Change Password</a>
     {{ parent() }}
-
-    {{ show_source_code(_self) }}
 {% endblock %}
 
 {% block javascripts %}

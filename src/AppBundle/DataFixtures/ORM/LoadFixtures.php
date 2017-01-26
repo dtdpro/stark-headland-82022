@@ -11,6 +11,8 @@
 
 namespace AppBundle\DataFixtures\ORM;
 
+use AppBundle\Entity\MenuItem;
+use AppBundle\Entity\PostCategory;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Post;
 use AppBundle\Entity\Comment;
@@ -43,6 +45,8 @@ class LoadFixtures implements FixtureInterface, ContainerAwareInterface
     {
         $adminUser = $this->loadUsers($manager);
         $this->loadPosts($manager,$adminUser);
+	    $this->loadForms($manager);
+	    $this->loadMenu($manager);
     }
 
     private function loadUsers(ObjectManager $manager)
@@ -51,16 +55,22 @@ class LoadFixtures implements FixtureInterface, ContainerAwareInterface
 
         $johnUser = new User();
         $johnUser->setUsername('john_user');
-        $johnUser->setEmail('john_user@symfony.com');
-        $encodedPassword = $passwordEncoder->encodePassword($johnUser, 'kitten');
+        $johnUser->setFirstName('John');
+        $johnUser->setLastName('User');
+        $johnUser->setEmail('john_user@dtdpro.com');
+        $johnUser->setEnabled(true);
+        $encodedPassword = $passwordEncoder->encodePassword($johnUser, 'admin');
         $johnUser->setPassword($encodedPassword);
         $manager->persist($johnUser);
 
         $annaAdmin = new User();
         $annaAdmin->setUsername('admin');
-        $annaAdmin->setEmail('admin@symfony.com');
+        $annaAdmin->setFirstName("Admin");
+        $annaAdmin->setLastName("User");
+        $annaAdmin->setEmail('admin@dtdpro.com');
+	    $annaAdmin->setEnabled(true);
         $annaAdmin->setRoles(array('ROLE_ADMIN'));
-        $encodedPassword = $passwordEncoder->encodePassword($annaAdmin, 'kitten');
+        $encodedPassword = $passwordEncoder->encodePassword($annaAdmin, 'admin');
         $annaAdmin->setPassword($encodedPassword);
         $manager->persist($annaAdmin);
 
@@ -71,7 +81,22 @@ class LoadFixtures implements FixtureInterface, ContainerAwareInterface
 
     private function loadPosts(ObjectManager $manager, $adminUser)
     {
-        foreach (range(1, 30) as $i) {
+		// Categories
+    	$rootCategory = new PostCategory();
+    	$rootCategory->setName('Blog');
+	    $rootCategory->setSlug('blog');
+	    $manager->persist($rootCategory);
+	    $manager->flush();
+
+	    $baseCategory = new PostCategory();
+	    $baseCategory->setName('Uncategorized');
+	    $baseCategory->setSlug('uncategorized');
+	    $baseCategory->setParent($rootCategory);
+	    $manager->persist($baseCategory);
+	    $manager->flush();
+
+	    // Posts
+    	foreach (range(1, 30) as $i) {
 
             $newdate = new \DateTime('now - '.$i.'days');
             $post = new Post();
@@ -84,6 +109,7 @@ class LoadFixtures implements FixtureInterface, ContainerAwareInterface
             $post->setPublishedAt($newdate);
             $post->setUpdatedAt($newdate);
             $post->setStatus(1);
+            $post->setCategory($baseCategory);
 
             foreach (range(1, 5) as $j) {
                 $comment = new Comment();
@@ -102,6 +128,69 @@ class LoadFixtures implements FixtureInterface, ContainerAwareInterface
 
         $manager->flush();
     }
+
+	private function loadForms(ObjectManager $manager)
+	{
+
+		// Categories
+		$rootCategory = new PostCategory();
+		$rootCategory->setName('Form');
+		$rootCategory->setSlug('form');
+		$manager->persist($rootCategory);
+		$manager->flush();
+
+		$baseCategory = new PostCategory();
+		$baseCategory->setName('Uncategorized');
+		$baseCategory->setSlug('uncategorized');
+		$baseCategory->setParent($rootCategory);
+		$manager->persist($baseCategory);
+
+		$manager->flush();
+	}
+
+	private function loadMenu(ObjectManager $manager)
+	{
+
+		// Main Menu
+		$mainMenu = new MenuItem();
+		$mainMenu->setName("Main Menu");
+		$manager->persist($mainMenu);
+		$manager->flush();
+
+		$menuItem = new MenuItem(); $menuItem->setName("Home"); $menuItem->setRoute("blog_index"); $menuItem->setIcon('fa-home'); $menuItem->setParent($mainMenu); $manager->persist($menuItem); $manager->flush();
+		$menuItem = new MenuItem(); $menuItem->setName("Webforms"); $menuItem->setRoute("webform_index"); $menuItem->setIcon('fa-clipboard'); $menuItem->setParent($mainMenu); $manager->persist($menuItem); $manager->flush();
+
+		$watsonItem = new MenuItem(); $watsonItem->setName("Watson"); $watsonItem->setRoute("watson_index"); $watsonItem->setIcon('fa-laptop'); $watsonItem->setRoles(array('ROLE_USER')); $watsonItem->setParent($mainMenu); $manager->persist($watsonItem); $manager->flush();
+		$menuItem = new MenuItem(); $menuItem->setName("Watson Playground"); $menuItem->setRoute("watson_index"); $menuItem->setIcon('fa-laptop'); $menuItem->setRoles(array('ROLE_USER'));  $menuItem->setParent($watsonItem); $manager->persist($menuItem); $manager->flush();
+		$menuItem = new MenuItem(); $menuItem->setName("Text to Speech"); $menuItem->setRoute("text_to_speech"); $menuItem->setIcon('fa-volume-up'); $menuItem->setRoles(array('ROLE_USER'));  $menuItem->setParent($watsonItem); $manager->persist($menuItem); $manager->flush();
+
+		$menuItem = new MenuItem(); $menuItem->setName("Admin"); $menuItem->setRoute("admin_index"); $menuItem->setIcon('fa-lock'); $menuItem->setRoles(array('ROLE_ADMIN')); $menuItem->setParent($mainMenu); $manager->persist($menuItem); $manager->flush();
+		$menuItem = new MenuItem(); $menuItem->setName("Profile"); $menuItem->setRoute("fos_user_profile_show"); $menuItem->setIcon('fa-user'); $menuItem->setRoles(array('ROLE_USER')); $menuItem->setParent($mainMenu); $manager->persist($menuItem); $manager->flush();
+		$menuItem = new MenuItem(); $menuItem->setName("Logout"); $menuItem->setRoute("fos_user_security_logout"); $menuItem->setIcon('fa-sign-out'); $menuItem->setRoles(array('ROLE_USER')); $menuItem->setParent($mainMenu); $manager->persist($menuItem); $manager->flush();
+		$menuItem = new MenuItem(); $menuItem->setName("Register"); $menuItem->setRoute("fos_user_registration_register"); $menuItem->setIcon('fa-user'); $menuItem->setDisplayAnon(true); $menuItem->setParent($mainMenu); $manager->persist($menuItem); $manager->flush();
+		$menuItem = new MenuItem(); $menuItem->setName("Login"); $menuItem->setRoute("fos_user_security_login"); $menuItem->setIcon('fa-sign-in'); $menuItem->setDisplayAnon(true); $menuItem->setParent($mainMenu); $manager->persist($menuItem); $manager->flush();
+
+
+		// Side Menu
+		$sideMenu = new MenuItem();
+		$sideMenu->setName("Side Menu");
+		$manager->persist($sideMenu);
+		$manager->flush();
+
+		$menuItem = new MenuItem(); $menuItem->setName("Home"); $menuItem->setRoute("blog_index"); $menuItem->setIcon('fa-home'); $menuItem->setParent($sideMenu); $manager->persist($menuItem); $manager->flush();
+
+		// Footer Menu
+		$footMenu = new MenuItem();
+		$footMenu->setName("Footer Menu");
+		$manager->persist($footMenu);
+		$manager->flush();
+
+		$menuItem = new MenuItem(); $menuItem->setName("Admin"); $menuItem->setRoute("admin_index"); $menuItem->setIcon('fa-lock'); $menuItem->setRoles(array('ROLE_ADMIN')); $menuItem->setParent($footMenu); $manager->persist($menuItem); $manager->flush();
+		$menuItem = new MenuItem(); $menuItem->setName("Logout"); $menuItem->setRoute("fos_user_security_logout"); $menuItem->setIcon('fa-sign-out'); $menuItem->setRoles(array('ROLE_USER')); $menuItem->setParent($footMenu); $manager->persist($menuItem); $manager->flush();
+		$menuItem = new MenuItem(); $menuItem->setName("Login"); $menuItem->setRoute("fos_user_security_login"); $menuItem->setIcon('fa-sign-in'); $menuItem->setDisplayAnon(true); $menuItem->setParent($footMenu); $manager->persist($menuItem); $manager->flush();
+
+		$manager->flush();
+	}
 
     /**
      * {@inheritdoc}
