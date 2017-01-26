@@ -81,8 +81,8 @@
         "aws_s3_bucket": "AWS_S3_BUCKET",
         "aws_s3_dir": "AWS_S3_DIR",
         "aws_cf_url": "AWS_CF_URL",
-        "ga_id": "GA_ID"
-        "watson_text_to_speech_username": "WATSON_T2S_USER"
+        "ga_id": "GA_ID",
+        "watson_text_to_speech_username": "WATSON_T2S_USER",
         "watson_text_to_speech_username": "WATSON_T2S_PASS"
       }
     }
