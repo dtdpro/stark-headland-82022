@@ -83,7 +83,7 @@
         "aws_cf_url": "AWS_CF_URL",
         "ga_id": "GA_ID",
         "watson_text_to_speech_username": "WATSON_T2S_USER",
-        "watson_text_to_speech_username": "WATSON_T2S_PASS"
+        "watson_text_to_speech_password": "WATSON_T2S_PASS"
       }
     }
   }

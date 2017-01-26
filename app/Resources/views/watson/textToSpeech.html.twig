@@ -5,6 +5,7 @@
 {% block body_id 'text_to_speech' %}
 
 {% block main %}
+    {% if cred_supplied == false %}<div class="alert alert-danger" role="alert">API Credentials Missing</div>{% endif %}
     <div class="" id="editors">
         <form id="sppektome">
             <div class="form-group">

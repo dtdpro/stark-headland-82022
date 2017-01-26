@@ -25,6 +25,7 @@ class WatsonController extends Controller
 {
     /**
      * @Route("/", name="watson_index")
+     * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
      */
     public function indexAction()
     {
@@ -33,15 +34,23 @@ class WatsonController extends Controller
 
     /**
      * @Route("/text-to-speech", name="text_to_speech")
+     * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
      */
     public function textToSpeechAction()
     {
+	    $username = $this->container->getParameter('watson_text-to-speech_username');
+	    $password = $this->container->getParameter('watson_text-to-speech_password');
 
-        return $this->render('watson/textToSpeech.html.twig');
+	    $cred_supplied = true;
+	    if ($username == '') $cred_supplied = false;
+	    if ($password == '') $cred_supplied = false;
+
+        return $this->render('watson/textToSpeech.html.twig', array('cred_supplied'=>$cred_supplied));
     }
 
 	/**
 	 * @Route("/speek-to-me", name="sppek_to_me")
+	 * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
 	 */
 	public function speekToMeAction(Request $request)
     {
